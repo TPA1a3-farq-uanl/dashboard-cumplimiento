@@ -126,10 +126,21 @@ tfoot td { background: var(--dark); color: #BDD7EE; font-weight: 700; padding: 7
 .modal-btns { display: flex; gap: 8px; margin-top: 16px; justify-content: flex-end; }
 
 footer { text-align: center; padding: 10px; font-size: 10px; color: var(--muted); }
+
+/* ── Modo solo lectura (GitHub Pages) ── */
+body.read-only .chip { cursor: default !important; pointer-events: none !important; }
+body.read-only input[type="text"],
+body.read-only input[type="date"] { pointer-events: none !important; background: transparent !important; border-color: transparent !important; color: var(--muted); }
+body.read-only .btn-primary { display: none !important; }
+body.read-only .btn-success { display: none !important; }
+body.read-only #fSort { display: none !important; }
+.ro-banner { background: #1F3864; color: #BDD7EE; text-align: center; padding: 5px; font-size: 11px; font-weight: 600; letter-spacing: .3px; display: none; }
+body.read-only .ro-banner { display: block; }
 </style>
 </head>
 <body>
 
+<div class="ro-banner">🔒 Modo visualización — Solo lectura · Para editar: Dashboard_Cumplimiento_Docente.html (local)</div>
 <div class="header">
   <div class="header-top">
     <div>
@@ -785,6 +796,10 @@ function exportCSV(){
 }
 
 function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',2500); }
+
+// ── Modo solo lectura en GitHub Pages ──
+const READ_ONLY = window.location.hostname.includes('github.io');
+if (READ_ONLY) document.body.classList.add('read-only');
 
 load();
 render();
