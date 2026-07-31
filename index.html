@@ -127,6 +127,29 @@ tfoot td { background: var(--dark); color: #BDD7EE; font-weight: 700; padding: 7
 
 footer { text-align: center; padding: 10px; font-size: 10px; color: var(--muted); }
 
+/* ── Pestañas ── */
+.tabs { background: #fff; border-bottom: 2px solid var(--border); padding: 0 20px; display: flex; gap: 2px; }
+.tab { background: transparent; border: none; border-bottom: 3px solid transparent; padding: 10px 18px; font-size: 12.5px; font-weight: 600; color: var(--muted); cursor: pointer; font-family: inherit; transition: color .15s, border-color .15s, background .15s; }
+.tab:hover { background: var(--gray-bg); color: var(--dark); }
+.tab.active { color: var(--dark); border-bottom-color: var(--mid); background: #F0F6FF; }
+.tab .cnt { display: inline-block; background: var(--light); color: var(--dark); border-radius: 9px; padding: 0 6px; font-size: 10px; margin-left: 6px; }
+.tab.active .cnt { background: var(--mid); color: #fff; }
+
+/* ── Sembrado ── */
+.th-sem { background: #6C3483; color: #fff; }
+.th-sem2{ background: #4A235A; color: #fff; }
+.pill { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 10px; font-weight: 700; }
+.p-mat { background: #FDEBD0; color: #7E5109; }
+.p-ves { background: #D4E6F1; color: #1A5276; }
+.p-noc { background: #D6DBDF; color: #2C3E50; }
+.p-new { background: #FADBD8; color: #922B21; }
+.aula  { font-family: 'Consolas','Courier New',monospace; font-size: 11px; background: var(--gray-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; }
+.hora  { font-family: 'Consolas','Courier New',monospace; font-size: 10px; color: var(--muted); white-space: nowrap; margin-left: 3px; }
+.hora-ref { display: inline-block; font-family: 'Consolas','Courier New',monospace; font-size: 10px; background: rgba(255,255,255,.6); border: 1px solid rgba(133,100,4,.25); border-radius: 4px; padding: 0 5px; margin: 2px 3px 0 0; }
+.carga-bar { display: inline-block; height: 7px; border-radius: 4px; background: var(--tpa); vertical-align: middle; }
+.note-box { background: #FFF3CD; border-left: 4px solid #B7950B; padding: 9px 14px; margin: 12px 20px 0; border-radius: 6px; font-size: 11.5px; color: #856404; line-height: 1.6; }
+.note-box b { color: #6b4e03; }
+
 /* ── Modo solo lectura (GitHub Pages) ── */
 body.read-only .chip { cursor: default !important; pointer-events: none !important; }
 body.read-only input[type="text"],
@@ -158,6 +181,13 @@ body.read-only .ro-hide  { display: none !important; }
     <span>evidencias.composicion@gmail.com</span>
   </div>
 </div>
+
+<div class="tabs">
+  <button class="tab active" id="tabBtn-cumpl"    onclick="switchTab('cumpl')">📋 Cumplimiento EJ26</button>
+  <button class="tab"        id="tabBtn-sembrado" onclick="switchTab('sembrado')">🗓️ Sembrado Ago–Dic 2026 <span class="cnt" id="semCnt">—</span></button>
+</div>
+
+<div id="panel-cumpl">
 
 <div class="kpi-row">
   <div class="kpi blue">  <div class="num" id="kDoc">—</div>  <div class="lbl">Docentes</div></div>
@@ -239,6 +269,78 @@ body.read-only .ro-hide  { display: none !important; }
 </table>
 </div>
 
+</div><!-- /panel-cumpl -->
+
+<div id="panel-sembrado" style="display:none">
+
+  <div class="kpi-row">
+    <div class="kpi purple"><div class="num" id="sDoc">—</div>  <div class="lbl">Docentes</div></div>
+    <div class="kpi purple"><div class="num" id="sGpo">—</div>  <div class="lbl">Grupos</div></div>
+    <div class="kpi blue">  <div class="num" id="sLMC">—</div>  <div class="lbl">LMC</div></div>
+    <div class="kpi green"> <div class="num" id="sLDA">—</div>  <div class="lbl">LDA</div></div>
+    <div class="kpi yellow"><div class="num" id="sIDA">—</div>  <div class="lbl">IDA</div></div>
+    <div class="kpi blue">  <div class="num" id="sAula">—</div> <div class="lbl">Aulas</div></div>
+    <div class="kpi green"> <div class="num" id="sProm">—</div> <div class="lbl">Carga prom.</div></div>
+    <div class="kpi red">   <div class="num" id="sNew">—</div>  <div class="lbl">Docentes nuevos</div></div>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" id="sSearch" placeholder="🔍 Buscar docente, grupo o aula…" oninput="renderSem()">
+    <select id="sUA" onchange="renderSem()">
+      <option value="">Todas las UA</option>
+      <option>LMC</option><option>LDA</option><option>IDA</option>
+    </select>
+    <select id="sTurno" onchange="renderSem()">
+      <option value="">Todos los turnos</option>
+      <option value="M">Matutino</option>
+      <option value="V">Vespertino</option>
+      <option value="N">Nocturno</option>
+    </select>
+    <select id="sBloque" onchange="renderSem()">
+      <option value="">Todos los bloques</option>
+    </select>
+    <select id="sSort" onchange="renderSem()">
+      <option value="carga">Mayor carga primero</option>
+      <option value="apellido">A–Z por apellido</option>
+      <option value="cve">Por clave (CVE)</option>
+    </select>
+    <button class="btn btn-success" onclick="exportSemCSV()">⬇ CSV</button>
+    <div class="spacer"></div>
+    <div class="ua-legend">
+      <span class="pill p-mat">■ Matutino</span>
+      <span class="pill p-ves">■ Vespertino</span>
+      <span class="pill p-noc">■ Nocturno</span>
+      <span class="pill p-new">▲ Docente nuevo</span>
+    </div>
+  </div>
+
+  <div class="note-box" id="semNote"></div>
+
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th class="left th-sem" style="width:26px">#</th>
+        <th class="left th-sem" style="min-width:230px">Docente</th>
+        <th class="th-sem" style="width:70px">CVE</th>
+        <th class="th-sem" style="min-width:110px">Carga</th>
+        <th class="th-sem" style="min-width:150px">Unidades de aprendizaje</th>
+        <th class="th-sem2" style="min-width:70px">UA</th>
+        <th class="th-sem2" style="min-width:55px">Grupo</th>
+        <th class="th-sem2" style="min-width:60px">Aula</th>
+        <th class="th-sem2" style="min-width:95px">Bloque / Horario</th>
+        <th class="th-sem2" style="min-width:60px">Días</th>
+        <th class="th-sem2" style="min-width:45px">NR</th>
+        <th class="th-sem2" style="min-width:35px">S</th>
+      </tr>
+    </thead>
+    <tbody id="semBody"></tbody>
+    <tfoot><tr id="semFoot"></tr></tfoot>
+  </table>
+  </div>
+
+</div><!-- /panel-sembrado -->
+
 <div class="modal-bg" id="modalBg">
   <div class="modal">
     <h3 id="modalTitle">Agregar docente / grupo</h3>
@@ -275,9 +377,85 @@ const ACT_COORD = ['jIC','jCC','m1'];     // Indicador 2 — Coordinación
 // ── Parches automáticos (escritos por la tarea programada) ──────────────────
 // FILE_UPDATE_TS: la tarea lo actualiza en cada corrida para forzar merge
 // AUTO_UPDATES: array de {doc, gpo, lC, pA, fecha, notas} detectados en Gmail
-const FILE_UPDATE_TS = '2026-07-24T17:47:53';
-const AUTO_UPDATES   = [];
-  // Consolidados en DATA el 2026-07-24T17:47:53 vía Guardar→Archivo
+const FILE_UPDATE_TS = '2026-07-31T20:15:00';
+const AUTO_UPDATES   = [
+  // ── Evidencias recibidas 31-jul-2026 ──────────────────────────────────────
+  {doc:'ALEJANDRA TELLO BECERRIL', gpo:'013', lC:'✓', pA:'✓', fecha:'2026-07-31', notas:'Recibido por correo 31-jul'},
+  {doc:'ALEJANDRA TELLO BECERRIL', gpo:'021', lC:'✓', pA:'✓', fecha:'2026-07-31', notas:'Recibido por correo 31-jul'},
+  // ── Evidencias recibidas 30-jul-2026 (corrida 31-jul) ─────────────────────
+  {doc:'ALMA MIREYA MARTINEZ MARTINEZ', gpo:'037', lC:'✓', pA:'✓', fecha:'2026-07-30', notas:'Recibido 30-jul | Control LMC 037 + 3 PIA | Borrador acuse 31-jul'},
+  {doc:'ALMA MIREYA MARTINEZ MARTINEZ', gpo:'064', lC:'✓', pA:'✓', fecha:'2026-07-30', notas:'Recibido 30-jul | Control LMC 064 + 3 PIA | Borrador acuse 31-jul'},
+  {doc:'ALMA MIREYA MARTINEZ MARTINEZ', gpo:'029', lC:'✓', pA:'✓', fecha:'2026-07-30', notas:'Recibido 30-jul | Control IDA 029 + 2 PIA | Borrador acuse 31-jul'},
+  // ── Reconciliación de acuses 29-jul-2026 ──────────────────────────────────
+  // Auditoría de la bandeja de evidencias.composicion@gmail.com: 44 acuses
+  // ("Confirmamos la recepción…") ya fueron ENVIADOS pero el campo acuse
+  // seguía vacío en el dashboard. Se marcan aquí con la fecha real de envío.
+  {doc:'GUILIANA LIZBETH GALLARDO HURTADO', gpo:'002', lC:'✓', pA:'✓', fecha:'2026-07-24', acuse:'✓', notas:'Acuse enviado 28-jul'},
+  {doc:'GUILIANA LIZBETH GALLARDO HURTADO', gpo:'015', lC:'✓', pA:'✓', fecha:'2026-07-24', acuse:'✓', notas:'Acuse enviado 28-jul'},
+  {doc:'GABRIELA ALEJANDRA ALBUERNE KELLY', gpo:'002', acuse:'✓', notas:'Acuse enviado 1-jul'},
+  {doc:'GABRIELA ALEJANDRA ALBUERNE KELLY', gpo:'023', acuse:'✓', notas:'Acuse enviado 1-jul'},
+  {doc:'MARIA ELISA VAZQUEZ COVARRUBIAS',   gpo:'004', acuse:'✓', notas:'Acuse enviado 22-jun'},
+  {doc:'MARIA ELISA VAZQUEZ COVARRUBIAS',   gpo:'029', acuse:'✓', notas:'Acuse enviado 22-jun'},
+  {doc:'MARIA ELISA VAZQUEZ COVARRUBIAS',   gpo:'036', acuse:'✓', notas:'Acuse enviado 22-jun'},
+  {doc:'GABRIELA PACHUCA CASTRUITA',        gpo:'005', acuse:'✓', notas:'Acuse enviado 20-jul'},
+  {doc:'GABRIELA PACHUCA CASTRUITA',        gpo:'028', acuse:'✓', notas:'Acuse enviado 20-jul'},
+  {doc:'GABRIELA PACHUCA CASTRUITA',        gpo:'035', acuse:'✓', notas:'Acuse enviado 20-jul'},
+  {doc:'FERMINA HINOJOSA VAZQUEZ',          gpo:'006', acuse:'✓', notas:'Acuse enviado 3-jul (saeydi.farq@gmail.com)'},
+  {doc:'FERMINA HINOJOSA VAZQUEZ',          gpo:'008', acuse:'✓', notas:'Acuse enviado 3-jul (saeydi.farq@gmail.com)'},
+  {doc:'DIANA JANETTE HERNANDEZ PENILLA',   gpo:'007', acuse:'✓', notas:'Acuse enviado 20-jul'},
+  {doc:'DIANA JANETTE HERNANDEZ PENILLA',   gpo:'011', acuse:'✓', notas:'Acuse enviado 20-jul'},
+  {doc:'DIANA JANETTE HERNANDEZ PENILLA',   gpo:'024', acuse:'✓', notas:'Acuse enviado 20-jul'},
+  {doc:'DIANA JANETTE HERNANDEZ PENILLA',   gpo:'060', acuse:'✓', notas:'Acuse enviado 20-jul'},
+  {doc:'MARIA MARLEN DE LEON CEPEDA',       gpo:'009', acuse:'✓', notas:'Acuse enviado 20-jul'},
+  {doc:'MARIA MARLEN DE LEON CEPEDA',       gpo:'022', acuse:'✓', notas:'Acuse enviado 20-jul'},
+  {doc:'MARIA MARLEN DE LEON CEPEDA',       gpo:'015', acuse:'✓', notas:'Acuse enviado 20-jul'},
+  {doc:'MARIA MARLEN DE LEON CEPEDA',       gpo:'012', acuse:'✓', notas:'Acuse enviado 20-jul'},
+  {doc:'MIRIEL RIVERA SOTO',                gpo:'015', acuse:'✓', notas:'Acuse enviado 1-jul'},
+  {doc:'MIRIEL RIVERA SOTO',                gpo:'010', acuse:'✓', notas:'Acuse enviado 1-jul'},
+  {doc:'CARMEN LUCERO CORONADO GONZALEZ',   gpo:'018', acuse:'✓', notas:'Acuse enviado 6-jul'},
+  {doc:'CARMEN LUCERO CORONADO GONZALEZ',   gpo:'032', acuse:'✓', notas:'Acuse enviado 6-jul'},
+  {doc:'CARMEN LUCERO CORONADO GONZALEZ',   gpo:'069', acuse:'✓', notas:'Acuse enviado 6-jul'},
+  {doc:'CARMEN LUCERO CORONADO GONZALEZ',   gpo:'003', acuse:'✓', notas:'Acuse enviado 6-jul'},
+  {doc:'ROBERTO EFRAIN PALOMO MARTINEZ',    gpo:'033', acuse:'✓', notas:'Acuse enviado 22-jun'},
+  {doc:'ROBERTO EFRAIN PALOMO MARTINEZ',    gpo:'068', acuse:'✓', notas:'Acuse enviado 22-jun'},
+  {doc:'ROBERTO EFRAIN PALOMO MARTINEZ',    gpo:'008', acuse:'✓', notas:'Acuse enviado 22-jun'},
+  {doc:'ROBERTO EFRAIN PALOMO MARTINEZ',    gpo:'035', acuse:'✓', notas:'Acuse enviado 22-jun'},
+  {doc:'BERTIN MAURICIO ZAVALA RUGERIO',    gpo:'038', acuse:'✓', notas:'Acuse enviado 23-jun'},
+  {doc:'OSVALDO ANTONIO GARCIA MOLINA',     gpo:'061', acuse:'✓', notas:'Acuse enviado 6-jul'},
+  {doc:'OSVALDO ANTONIO GARCIA MOLINA',     gpo:'066', acuse:'✓', notas:'Acuse enviado 6-jul'},
+  {doc:'YEYMI GUADALUPE HERNANDEZ RIVERA',  gpo:'063',   acuse:'✓', notas:'Acuse enviado 1-jul'},
+  {doc:'YEYMI GUADALUPE HERNANDEZ RIVERA',  gpo:'022',   acuse:'✓', notas:'Acuse enviado 1-jul'},
+  {doc:'YEYMI GUADALUPE HERNANDEZ RIVERA',  gpo:'028',   acuse:'✓', notas:'Acuse enviado 1-jul'},
+  {doc:'YEYMI GUADALUPE HERNANDEZ RIVERA',  gpo:'AJ-02', acuse:'✓', notas:'Acuse enviado 1-jul'},
+  {doc:'DINORAH ADRIANA LUNA CASAS',        gpo:'067', acuse:'✓', notas:'Acuse enviado 24-jul (arqadrianaluna.farq@gmail.com)'},
+  {doc:'DINORAH ADRIANA LUNA CASAS',        gpo:'007', acuse:'✓', notas:'Acuse enviado 24-jul (arqadrianaluna.farq@gmail.com)'},
+  {doc:'JAVIER ISAAC GARZA ZUNIGA',         gpo:'001', acuse:'✓', notas:'Acuse enviado 21-jul'},
+  {doc:'LUCIO ESAU RODRIGUEZ DAVALOS',      gpo:'002', acuse:'✓', notas:'Acuse enviado 24-jul'},
+  {doc:'MONICA PATRICIA ORTIZ DIAZ',        gpo:'005', acuse:'✓', notas:'Acuse enviado 22-jun'},
+  {doc:'MONICA PATRICIA ORTIZ DIAZ',        gpo:'029', acuse:'✓', notas:'Acuse enviado 22-jun'},
+  {doc:'SONIA GUADALUPE RIVERA CASTILLO',   gpo:'009', acuse:'✓', notas:'Acuse enviado 1-jul (soniariverac@hotmail.com)'},
+  {doc:'SONIA GUADALUPE RIVERA CASTILLO',   gpo:'025', acuse:'✓', notas:'Acuse enviado 1-jul (soniariverac@hotmail.com)'},
+  {doc:'ARNULFO ALVARADO RUIZ',             gpo:'012', acuse:'✓', notas:'Acuse enviado 24-jul'},
+  {doc:'ARNULFO ALVARADO RUIZ',             gpo:'007', acuse:'✓', notas:'Acuse enviado 24-jul'},
+  {doc:'SARAHI ALVARADO VILLARREAL',        gpo:'020', acuse:'✓', notas:'Acuse enviado 22-jun'},
+  {doc:'SARAHI ALVARADO VILLARREAL',        gpo:'034', acuse:'✓', notas:'Acuse enviado 22-jun'},
+  {doc:'ANA MARIA HERNANDEZ PEREZ',         gpo:'026', acuse:'✓', notas:'Acuse enviado 2-jul'},
+  {doc:'ANA MARIA HERNANDEZ PEREZ',         gpo:'032', acuse:'✓', notas:'Acuse enviado 6-jul'},
+  {doc:'ANA MARIA HERNANDEZ PEREZ',         gpo:'019', acuse:'✓', notas:'Acuse enviado 6-jul'},
+  {doc:'PALMIRA CECILIA VALENZUELA TAMEZ',  gpo:'006', acuse:'✓', notas:'Acuse enviado 1-jul (palmira.valenzuelatm@uanl.edu.mx)'},
+  {doc:'DIANA KARINA PADILLA HERRERA',      gpo:'010', acuse:'✓', notas:'Acuse enviado 24-jul (DIANA.PADILLAHRR@uanl.edu.mx)'},
+  {doc:'ANA VICTORIA CASILLAS ZAPATA',      gpo:'013', acuse:'✓', notas:'Acuse enviado 22-jun y 1-jul'},
+  {doc:'LUIS ENRIQUE OMANA TIJERINA',       gpo:'018', acuse:'✓', notas:'Acuse enviado 8-jul'},
+  {doc:'LUIS ENRIQUE OMANA TIJERINA',       gpo:'023', acuse:'✓', notas:'Acuse enviado 8-jul'},
+  // Pendiente real: LUIS ALFONSO DE LA FUENTE SUAREZ (LMC 014) — evidencias
+  // recibidas 19-jun sin acuse; borrador creado 29-jul.
+  {doc:'LUIS ALFONSO DE LA FUENTE SUAREZ',  gpo:'014', notas:'Sin acuse desde 19-jun | Borrador acuse creado 29-jul'},
+];
+  // Correos alternos detectados (el docente escribe desde una cuenta distinta a la registrada):
+  // Fermina Hinojosa → saeydi.farq@gmail.com · Dinorah Luna → arqadrianaluna.farq@gmail.com
+  // Sonia Rivera → soniariverac@hotmail.com · Yeymi Hernández → yeymipineda1@gmail.com
+  // Gallardo Hurtado → liz.15gaa@gmail.com · Héctor Gil → arq.hectorgil@yahoo.com.mx
+  // Diana Penilla → diana.hernandezpl@uanl.edu.mx · Gabriela Pachuca → gabrielapachuca@hotmail.com
 
 // ── Parches de asistencia a juntas — jIC/jCC del 19-ene y 22-may (PDFs Coord EJ26) ──
 const TEACH_UPDATES = [
@@ -1570,12 +1748,12 @@ let DATA = [
     "doc": "GUILIANA LIZBETH GALLARDO HURTADO",
     "ua": "IDA",
     "gpo": "002",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
+    "lC": "✓",
+    "pA": "✓",
+    "fecha": "2026-07-24",
     "acuse": "",
     "correo": "lizbeth.75go@outlook.com",
-    "notas": ""
+    "notas": "Recibido por correo 24-jul (liz.15gaa@gmail.com) | Borrador acuse creado 28-jul"
   },
   {
     "id": 78,
@@ -1726,12 +1904,12 @@ let DATA = [
     "doc": "GUILIANA LIZBETH GALLARDO HURTADO",
     "ua": "IDA",
     "gpo": "015",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
+    "lC": "✓",
+    "pA": "✓",
+    "fecha": "2026-07-24",
     "acuse": "",
     "correo": "lizbeth.75go@outlook.com",
-    "notas": ""
+    "notas": "Recibido por correo 24-jul (liz.15gaa@gmail.com) | Borrador acuse creado 28-jul"
   },
   {
     "id": 91,
@@ -1905,6 +2083,288 @@ let DATA = [
 let nextId = 105;
 let editId = null;
 
+// ══════════════════════════════════════════════════════════════════════════
+//  SEMBRADO PRELIMINAR AGOSTO–DICIEMBRE 2026 · Plan 440 (Modelo Acad. 2022)
+//  Fuente: "Reporte de nivel de grupo por materia/empleado" UANL, 27/07/26
+//  201 = LMC · 202 = LDA · 203 = IDA   |   Solo consulta y validación
+// ══════════════════════════════════════════════════════════════════════════
+const SEM_UA_NOMBRE = {
+  LMC: 'Laboratorio de Medios Creativos (201)',
+  LDA: 'Laboratorio de Diseño Arquitectónico (202)',
+  IDA: 'Introducción al Diseño Arquitectónico (203)'
+};
+// Docentes del padrón EJ26 que NO aparecen en este preliminar
+const SEM_SIN_CARGA = ['JACOBO ANTONIO CLETO GARZA','MARLA MEDINA','YEYMI GUADALUPE HERNANDEZ RIVERA','ANDREA GARCIA'];
+
+const SEMBRADO_AD26 = [
+  {cve:'095164',doc:'FERMINA HINOJOSA VAZQUEZ',ua:'LMC',gpo:'001',aula:'1331A',bloque:'M1-M2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'096669',doc:'GABRIELA ALEJANDRA ALBUERNE KELLY',ua:'LMC',gpo:'002',aula:'1331B',bloque:'M1-M2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'100208',doc:'DORIS MORALES GONZALEZ',ua:'LMC',gpo:'003',aula:'1331C',bloque:'M1-M2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'083559',doc:'MARIA ELISA VAZQUEZ COVARRUBIAS',ua:'LMC',gpo:'004',aula:'1331A',bloque:'M3-M4',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'085783',doc:'GABRIELA PACHUCA CASTRUITA',ua:'LMC',gpo:'005',aula:'1331B',bloque:'M3-M4',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'095164',doc:'FERMINA HINOJOSA VAZQUEZ',ua:'LMC',gpo:'006',aula:'1331C',bloque:'M3-M4',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'094817',doc:'DIANA JANETTE HERNANDEZ PENILLA',ua:'LMC',gpo:'007',aula:'1331A',bloque:'M5-M6',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'095164',doc:'FERMINA HINOJOSA VAZQUEZ',ua:'LMC',gpo:'008',aula:'1331B',bloque:'M5-M6',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'083556',doc:'MARIA MARLEN DE LEON CEPEDA',ua:'LMC',gpo:'009',aula:'1331C',bloque:'M5-M6',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'108757',doc:'JESUS ARTEMIO RUIZ ESPARZA',ua:'LMC',gpo:'010',aula:'1331A',bloque:'V1-V2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'094817',doc:'DIANA JANETTE HERNANDEZ PENILLA',ua:'LMC',gpo:'011',aula:'1331B',bloque:'V1-V2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'103696',doc:'YESSICA CAZARES ELIZONDO',ua:'LMC',gpo:'012',aula:'1331C',bloque:'V1-V2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'107509',doc:'ALEJANDRA TELLO BECERRIL',ua:'LMC',gpo:'013',aula:'1331A',bloque:'V4-V5',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'103772',doc:'LUIS ALFONSO DE LA FUENTE SUAREZ',ua:'LMC',gpo:'014',aula:'1331B',bloque:'V4-V5',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'116777',doc:'MIRIEL RIVERA SOTO',ua:'LMC',gpo:'015',aula:'1331C',bloque:'V4-V5',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'116777',doc:'MIRIEL RIVERA SOTO',ua:'LMC',gpo:'016',aula:'1331A',bloque:'V6-N1',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'AR0208',doc:'ANA SOFIA HERRERA SALDIVAR',ua:'LMC',gpo:'017',aula:'1331B',bloque:'V6-N1',dias:'L-X-V',nr:0,s:'C',nuevo:1},
+  {cve:'115557',doc:'ALEJANDRA MINERVA BENAVIDES LOZANO',ua:'LMC',gpo:'018',aula:'1331C',bloque:'V6-N1',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'103772',doc:'LUIS ALFONSO DE LA FUENTE SUAREZ',ua:'LMC',gpo:'019',aula:'1115A',bloque:'V1-V2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'018602',doc:'JESUS EDUARDO DURAN ACOSTA',ua:'LMC',gpo:'020',aula:'1115B',bloque:'V1-V2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'116777',doc:'MIRIEL RIVERA SOTO',ua:'LMC',gpo:'021',aula:'1115C',bloque:'V1-V2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'083556',doc:'MARIA MARLEN DE LEON CEPEDA',ua:'LMC',gpo:'022',aula:'2310A',bloque:'M3-M4',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'096669',doc:'GABRIELA ALEJANDRA ALBUERNE KELLY',ua:'LMC',gpo:'023',aula:'2310B',bloque:'M3-M4',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'094817',doc:'DIANA JANETTE HERNANDEZ PENILLA',ua:'LMC',gpo:'024',aula:'2310C',bloque:'M3-M4',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'085783',doc:'GABRIELA PACHUCA CASTRUITA',ua:'LMC',gpo:'028',aula:'1443A',bloque:'M1-M2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'083559',doc:'MARIA ELISA VAZQUEZ COVARRUBIAS',ua:'LMC',gpo:'029',aula:'1443B',bloque:'M1-M2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'106866',doc:'DANIEL ALBERTO TORRES GARZA',ua:'LMC',gpo:'030',aula:'1443C',bloque:'M1-M2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'115557',doc:'ALEJANDRA MINERVA BENAVIDES LOZANO',ua:'LMC',gpo:'031',aula:'1223A',bloque:'V4-V5',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'114162',doc:'CARMEN LUCERO CORONADO GONZALEZ',ua:'LMC',gpo:'032',aula:'1223B',bloque:'V4-V5',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'100570',doc:'ROBERTO EFRAIN PALOMO MARTINEZ',ua:'LMC',gpo:'033',aula:'1223C',bloque:'V4-V5',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'100208',doc:'DORIS MORALES GONZALEZ',ua:'LMC',gpo:'034',aula:'1222A',bloque:'M5-M6',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'085783',doc:'GABRIELA PACHUCA CASTRUITA',ua:'LMC',gpo:'035',aula:'1222B',bloque:'M5-M6',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'083559',doc:'MARIA ELISA VAZQUEZ COVARRUBIAS',ua:'LMC',gpo:'036',aula:'1222C',bloque:'M5-M6',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'006579',doc:'ALMA MIREYA MARTINEZ MARTINEZ',ua:'LMC',gpo:'037',aula:'2209A',bloque:'M1-M2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'104725',doc:'BERTIN MAURICIO ZAVALA RUGERIO',ua:'LMC',gpo:'038',aula:'2314A',bloque:'M1-M2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'094817',doc:'DIANA JANETTE HERNANDEZ PENILLA',ua:'LMC',gpo:'039',aula:'2314B',bloque:'M1-M2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
+  {cve:'115562',doc:'JAVIER MEDELLIN PALACIOS',ua:'LMC',gpo:'060',aula:'2207A',bloque:'V4-V5',dias:'L-X-V',nr:9,s:'C',nuevo:0},
+  {cve:'101216',doc:'OSVALDO ANTONIO GARCIA MOLINA',ua:'LMC',gpo:'061',aula:'1114A',bloque:'M3-M4',dias:'SÁB',nr:9,s:'C',nuevo:0},
+  {cve:'116777',doc:'MIRIEL RIVERA SOTO',ua:'LMC',gpo:'062',aula:'CIDL3',bloque:'N2-N3',dias:'L-X-V',nr:9,s:'C',nuevo:0},
+  {cve:'006579',doc:'ALMA MIREYA MARTINEZ MARTINEZ',ua:'LMC',gpo:'064',aula:'1223A',bloque:'N4-N5',dias:'L-X-V',nr:3,s:'A',nuevo:0},
+  {cve:'018602',doc:'JESUS EDUARDO DURAN ACOSTA',ua:'LMC',gpo:'065',aula:'1223B',bloque:'N4-N5',dias:'L-X-V',nr:9,s:'C',nuevo:0},
+  {cve:'101216',doc:'OSVALDO ANTONIO GARCIA MOLINA',ua:'LMC',gpo:'066',aula:'1223C',bloque:'N4-N5',dias:'L-X-V',nr:9,s:'C',nuevo:0},
+  {cve:'106863',doc:'DINORAH ADRIANA LUNA CASAS',ua:'LMC',gpo:'067',aula:'1443A',bloque:'V1-V2',dias:'L-X-V',nr:9,s:'C',nuevo:0},
+  {cve:'100570',doc:'ROBERTO EFRAIN PALOMO MARTINEZ',ua:'LMC',gpo:'068',aula:'1443B',bloque:'V1-V2',dias:'L-X-V',nr:9,s:'C',nuevo:0},
+  {cve:'114162',doc:'CARMEN LUCERO CORONADO GONZALEZ',ua:'LMC',gpo:'069',aula:'1443C',bloque:'V1-V2',dias:'L-X-V',nr:9,s:'C',nuevo:0},
+  {cve:'100690',doc:'JAVIER ISAAC GARZA ZUNIGA',ua:'LDA',gpo:'001',aula:'1333A',bloque:'M1-M2',dias:'L-X-V',nr:16,s:'A',nuevo:0},
+  {cve:'103094',doc:'LUCIO ESAU RODRIGUEZ DAVALOS',ua:'LDA',gpo:'002',aula:'1333B',bloque:'M1-M2',dias:'L-X-V',nr:17,s:'A',nuevo:0},
+  {cve:'103696',doc:'YESSICA CAZARES ELIZONDO',ua:'LDA',gpo:'003',aula:'1333C',bloque:'M1-M2',dias:'L-X-V',nr:18,s:'C',nuevo:0},
+  {cve:'108614',doc:'MARCELA LIZETH MENDOZA VAZQUEZ',ua:'LDA',gpo:'004',aula:'1333A',bloque:'M3-M4',dias:'L-X-V',nr:18,s:'C',nuevo:0},
+  {cve:'060100',doc:'MONICA PATRICIA ORTIZ DIAZ',ua:'LDA',gpo:'005',aula:'1333B',bloque:'M3-M4',dias:'L-X-V',nr:17,s:'A',nuevo:0},
+  {cve:'082999',doc:'MARTHA ELENA GOMEZ GARZA',ua:'LDA',gpo:'006',aula:'1333C',bloque:'M3-M4',dias:'L-X-V',nr:17,s:'A',nuevo:0},
+  {cve:'106863',doc:'DINORAH ADRIANA LUNA CASAS',ua:'LDA',gpo:'007',aula:'1333A',bloque:'M5-M6',dias:'L-X-V',nr:16,s:'A',nuevo:0},
+  {cve:'100570',doc:'ROBERTO EFRAIN PALOMO MARTINEZ',ua:'LDA',gpo:'008',aula:'1333B',bloque:'M5-M6',dias:'L-X-V',nr:17,s:'A',nuevo:0},
+  {cve:'060367',doc:'SONIA GUADALUPE RIVERA CASTILLO',ua:'LDA',gpo:'009',aula:'1333C',bloque:'M5-M6',dias:'L-X-V',nr:17,s:'A',nuevo:0},
+  {cve:'100707',doc:'OFELIA EDITH CASTILLO ORTIZ',ua:'LDA',gpo:'010',aula:'1333A',bloque:'V1-V2',dias:'L-X-V',nr:17,s:'A',nuevo:0},
+  {cve:'097894',doc:'HECTOR MIGUEL GIL LEAL',ua:'LDA',gpo:'011',aula:'1333B',bloque:'V1-V2',dias:'L-X-V',nr:16,s:'A',nuevo:0},
+  {cve:'107494',doc:'ARNULFO ALVARADO RUIZ',ua:'LDA',gpo:'012',aula:'1333C',bloque:'V1-V2',dias:'L-X-V',nr:17,s:'A',nuevo:0},
+  {cve:'106866',doc:'DANIEL ALBERTO TORRES GARZA',ua:'LDA',gpo:'013',aula:'1333A',bloque:'V4-V5',dias:'L-X-V',nr:16,s:'A',nuevo:0},
+  {cve:'097894',doc:'HECTOR MIGUEL GIL LEAL',ua:'LDA',gpo:'014',aula:'1333B',bloque:'V4-V5',dias:'L-X-V',nr:16,s:'A',nuevo:0},
+  {cve:'083556',doc:'MARIA MARLEN DE LEON CEPEDA',ua:'LDA',gpo:'015',aula:'1333C',bloque:'V4-V5',dias:'L-X-V',nr:16,s:'A',nuevo:0},
+  {cve:'018602',doc:'JESUS EDUARDO DURAN ACOSTA',ua:'LDA',gpo:'016',aula:'1333A',bloque:'V6-N1',dias:'L-X-V',nr:17,s:'A',nuevo:0},
+  {cve:'097894',doc:'HECTOR MIGUEL GIL LEAL',ua:'LDA',gpo:'017',aula:'1333B',bloque:'V6-N1',dias:'L-X-V',nr:16,s:'A',nuevo:0},
+  {cve:'107509',doc:'ALEJANDRA TELLO BECERRIL',ua:'LDA',gpo:'018',aula:'1333C',bloque:'V6-N1',dias:'L-X-V',nr:17,s:'A',nuevo:0},
+  {cve:'018602',doc:'JESUS EDUARDO DURAN ACOSTA',ua:'LDA',gpo:'019',aula:'1333A',bloque:'N2-N3',dias:'L-X-V',nr:18,s:'C',nuevo:0},
+  {cve:'114876',doc:'SARAHI ALVARADO VILLARREAL',ua:'LDA',gpo:'020',aula:'1333B',bloque:'N2-N3',dias:'L-X-V',nr:18,s:'C',nuevo:0},
+  {cve:'107509',doc:'ALEJANDRA TELLO BECERRIL',ua:'LDA',gpo:'021',aula:'1333C',bloque:'N2-N3',dias:'L-X-V',nr:15,s:'A',nuevo:0},
+  {cve:'060367',doc:'SONIA GUADALUPE RIVERA CASTILLO',ua:'LDA',gpo:'025',aula:'1332A',bloque:'M3-M4',dias:'L-X-V',nr:18,s:'C',nuevo:0},
+  {cve:'103094',doc:'LUCIO ESAU RODRIGUEZ DAVALOS',ua:'LDA',gpo:'026',aula:'1332B',bloque:'M3-M4',dias:'L-X-V',nr:16,s:'A',nuevo:0},
+  {cve:'085010',doc:'JESUS ALBERTO CANAVATI ESPINOSA',ua:'LDA',gpo:'027',aula:'1332C',bloque:'M3-M4',dias:'L-X-V',nr:17,s:'A',nuevo:0},
+  {cve:'100502',doc:'BRENDA JANETTE CASTANON NAVA',ua:'LDA',gpo:'028',aula:'1332A',bloque:'M5-M6',dias:'L-X-V',nr:17,s:'A',nuevo:0},
+  {cve:'060100',doc:'MONICA PATRICIA ORTIZ DIAZ',ua:'LDA',gpo:'029',aula:'1332B',bloque:'M5-M6',dias:'L-X-V',nr:17,s:'A',nuevo:0},
+  {cve:'100707',doc:'OFELIA EDITH CASTILLO ORTIZ',ua:'LDA',gpo:'030',aula:'1332C',bloque:'M5-M6',dias:'L-X-V',nr:16,s:'A',nuevo:0},
+  {cve:'106866',doc:'DANIEL ALBERTO TORRES GARZA',ua:'LDA',gpo:'031',aula:'1332A',bloque:'V1-V2',dias:'L-X-V',nr:16,s:'A',nuevo:0},
+  {cve:'108613',doc:'ANA MARIA HERNANDEZ PEREZ',ua:'LDA',gpo:'032',aula:'1332B',bloque:'V1-V2',dias:'L-X-V',nr:16,s:'A',nuevo:0},
+  {cve:'103692',doc:'NASHELLY RICANO ALARCON',ua:'LDA',gpo:'033',aula:'1332C',bloque:'V1-V2',dias:'L-X-V',nr:16,s:'A',nuevo:0},
+  {cve:'114876',doc:'SARAHI ALVARADO VILLARREAL',ua:'LDA',gpo:'034',aula:'1332A',bloque:'V6-N1',dias:'L-X-V',nr:16,s:'A',nuevo:0},
+  {cve:'100570',doc:'ROBERTO EFRAIN PALOMO MARTINEZ',ua:'LDA',gpo:'035',aula:'1332B',bloque:'V6-N1',dias:'L-X-V',nr:16,s:'A',nuevo:0},
+  {cve:'108757',doc:'JESUS ARTEMIO RUIZ ESPARZA',ua:'LDA',gpo:'036',aula:'1332C',bloque:'V6-N1',dias:'L-X-V',nr:17,s:'A',nuevo:0},
+  {cve:'109644',doc:'CESAR EDUARDO PINTOR ANGUIANO',ua:'IDA',gpo:'001',aula:'1114A',bloque:'M1-M2',dias:'L-X-V',nr:21,s:'C',nuevo:0},
+  {cve:'118248',doc:'GUILIANA LIZBETH GALLARDO HURTADO',ua:'IDA',gpo:'002',aula:'1114B',bloque:'M1-M2',dias:'L-X-V',nr:21,s:'C',nuevo:0},
+  {cve:'114162',doc:'CARMEN LUCERO CORONADO GONZALEZ',ua:'IDA',gpo:'003',aula:'1114C',bloque:'M1-M2',dias:'L-X-V',nr:22,s:'C',nuevo:0},
+  {cve:'106866',doc:'DANIEL ALBERTO TORRES GARZA',ua:'IDA',gpo:'004',aula:'1114A',bloque:'M3-M4',dias:'L-X-V',nr:21,s:'C',nuevo:0},
+  {cve:'109644',doc:'CESAR EDUARDO PINTOR ANGUIANO',ua:'IDA',gpo:'005',aula:'1114B',bloque:'M3-M4',dias:'L-X-V',nr:21,s:'C',nuevo:0},
+  {cve:'017355',doc:'PALMIRA CECILIA VALENZUELA TAMEZ',ua:'IDA',gpo:'006',aula:'1114C',bloque:'M3-M4',dias:'L-X-V',nr:22,s:'C',nuevo:0},
+  {cve:'107494',doc:'ARNULFO ALVARADO RUIZ',ua:'IDA',gpo:'007',aula:'1114A',bloque:'M5-M6',dias:'L-X-V',nr:21,s:'C',nuevo:0},
+  {cve:'106866',doc:'DANIEL ALBERTO TORRES GARZA',ua:'IDA',gpo:'008',aula:'1114B',bloque:'M5-M6',dias:'L-X-V',nr:21,s:'C',nuevo:0},
+  {cve:'105704',doc:'FABIOLA ROMERO HUERTA',ua:'IDA',gpo:'009',aula:'1114C',bloque:'M5-M6',dias:'L-X-V',nr:22,s:'C',nuevo:0},
+  {cve:'101117',doc:'DIANA KARINA PADILLA HERRERA',ua:'IDA',gpo:'010',aula:'1114A',bloque:'V1-V2',dias:'L-X-V',nr:21,s:'C',nuevo:0},
+  {cve:'108614',doc:'MARCELA LIZETH MENDOZA VAZQUEZ',ua:'IDA',gpo:'011',aula:'1114B',bloque:'V1-V2',dias:'L-X-V',nr:21,s:'C',nuevo:0},
+  {cve:'083556',doc:'MARIA MARLEN DE LEON CEPEDA',ua:'IDA',gpo:'012',aula:'1114C',bloque:'V1-V2',dias:'L-X-V',nr:22,s:'C',nuevo:0},
+  {cve:'103102',doc:'ANA VICTORIA CASILLAS ZAPATA',ua:'IDA',gpo:'013',aula:'2315A',bloque:'M3-M4',dias:'L-X-V',nr:13,s:'A',nuevo:0},
+  {cve:'100502',doc:'BRENDA JANETTE CASTANON NAVA',ua:'IDA',gpo:'014',aula:'2315B',bloque:'M3-M4',dias:'L-X-V',nr:13,s:'A',nuevo:0},
+  {cve:'118248',doc:'GUILIANA LIZBETH GALLARDO HURTADO',ua:'IDA',gpo:'015',aula:'2315C',bloque:'M3-M4',dias:'L-X-V',nr:13,s:'A',nuevo:0},
+  {cve:'105704',doc:'FABIOLA ROMERO HUERTA',ua:'IDA',gpo:'016',aula:'2310A',bloque:'M1-M2',dias:'L-X-V',nr:21,s:'C',nuevo:0},
+  {cve:'108614',doc:'MARCELA LIZETH MENDOZA VAZQUEZ',ua:'IDA',gpo:'017',aula:'2310B',bloque:'M1-M2',dias:'L-X-V',nr:22,s:'C',nuevo:0},
+  {cve:'115563',doc:'LUIS ENRIQUE OMANA TIJERINA',ua:'IDA',gpo:'018',aula:'2310C',bloque:'M1-M2',dias:'L-X-V',nr:21,s:'C',nuevo:0},
+  {cve:'108613',doc:'ANA MARIA HERNANDEZ PEREZ',ua:'IDA',gpo:'019',aula:'1114A',bloque:'V4-V5',dias:'L-X-V',nr:21,s:'C',nuevo:0},
+  {cve:'114875',doc:'EVA NOHEMI REA GARCIA',ua:'IDA',gpo:'020',aula:'1114B',bloque:'V4-V5',dias:'L-X-V',nr:22,s:'C',nuevo:0},
+  {cve:'018602',doc:'JESUS EDUARDO DURAN ACOSTA',ua:'IDA',gpo:'021',aula:'1114C',bloque:'V4-V5',dias:'L-X-V',nr:21,s:'C',nuevo:0},
+  {cve:'107494',doc:'ARNULFO ALVARADO RUIZ',ua:'IDA',gpo:'022',aula:'3305A',bloque:'V4-V5',dias:'L-X-V',nr:21,s:'C',nuevo:0},
+  {cve:'AR0012',doc:'ANGEL ISRAEL ZAVALA LOPEZ',ua:'IDA',gpo:'023',aula:'3305B',bloque:'V4-V5',dias:'L-X-V',nr:15,s:'A',nuevo:1},
+  {cve:'108757',doc:'JESUS ARTEMIO RUIZ ESPARZA',ua:'IDA',gpo:'024',aula:'3305C',bloque:'V4-V5',dias:'L-X-V',nr:22,s:'C',nuevo:0},
+  {cve:'AR9975',doc:'MARIA DEL SOCORRO ROBLEDO',ua:'IDA',gpo:'028',aula:'1114A',bloque:'N2-N3',dias:'L-X-V',nr:21,s:'C',nuevo:1},
+  {cve:'006579',doc:'ALMA MIREYA MARTINEZ MARTINEZ',ua:'IDA',gpo:'029',aula:'1114B',bloque:'N2-N3',dias:'L-X-V',nr:21,s:'C',nuevo:0},
+  {cve:'108757',doc:'JESUS ARTEMIO RUIZ ESPARZA',ua:'IDA',gpo:'030',aula:'1114C',bloque:'N2-N3',dias:'L-X-V',nr:21,s:'C',nuevo:0},
+  {cve:'006579',doc:'ALMA MIREYA MARTINEZ MARTINEZ',ua:'IDA',gpo:'034',aula:'1115A',bloque:'V6-N1',dias:'L-X-V',nr:21,s:'C',nuevo:0},
+  {cve:'114875',doc:'EVA NOHEMI REA GARCIA',ua:'IDA',gpo:'035',aula:'1115B',bloque:'V6-N1',dias:'L-X-V',nr:21,s:'C',nuevo:0},
+  {cve:'115563',doc:'LUIS ENRIQUE OMANA TIJERINA',ua:'IDA',gpo:'036',aula:'1115C',bloque:'V6-N1',dias:'L-X-V',nr:21,s:'C',nuevo:0},
+];
+
+// ── Utilidades del sembrado ──
+function semTurno(b){ const c=b[0]; return c==='M'?'M':(c==='V'?'V':'N'); }
+function semTurnoLbl(b){ return {M:'Matutino',V:'Vespertino',N:'Nocturno'}[semTurno(b)]; }
+function semTurnoCls(b){ return {M:'p-mat',V:'p-ves',N:'p-noc'}[semTurno(b)]; }
+
+// ── Tabla oficial de horas-clase (50 min) ──
+const SEM_HORA = {
+  M1:['7:00','7:50'],   M2:['7:50','8:40'],   M3:['8:40','9:30'],   M4:['9:30','10:20'],
+  M5:['10:20','11:10'], M6:['11:10','12:00'],
+  V1:['12:00','12:50'], V2:['12:50','13:40'], V3:['13:40','14:30'], V4:['14:30','15:20'],
+  V5:['15:20','16:10'], V6:['16:10','17:00'],
+  N1:['17:00','17:50'], N2:['17:50','18:40'], N3:['18:40','19:30'], N4:['19:30','20:20'],
+  N5:['20:20','21:10']
+};
+// 'M1-M2' → '7:00 - 8:40'  (inicio del primer bloque, fin del último)
+function semHorario(b){
+  const p=b.split('-'), a=SEM_HORA[p[0]], z=SEM_HORA[p[p.length-1]];
+  return (a&&z) ? a[0]+' - '+z[1] : '';
+}
+function semHoraIni(b){ const a=SEM_HORA[b.split('-')[0]]; return a?a[0]:''; }
+function semHoraFin(b){ const p=b.split('-'), z=SEM_HORA[p[p.length-1]]; return z?z[1]:''; }
+
+// Detección de traslapes (mismo docente o misma aula en igual bloque y días)
+function semChoques(){
+  const kd={}, ka={}, out={doc:[],aula:[]};
+  SEMBRADO_AD26.forEach(r=>{
+    const kdd=r.cve+'|'+r.bloque+'|'+r.dias, kaa=r.aula+'|'+r.bloque+'|'+r.dias;
+    (kd[kdd]=kd[kdd]||[]).push(r); (ka[kaa]=ka[kaa]||[]).push(r);
+  });
+  Object.values(kd).forEach(v=>{ if(v.length>1) out.doc.push(v); });
+  Object.values(ka).forEach(v=>{ if(v.length>1) out.aula.push(v); });
+  return out;
+}
+
+const semExpanded = new Set();
+function toggleSem(cve){ semExpanded.has(cve)?semExpanded.delete(cve):semExpanded.add(cve); renderSem(); }
+
+function switchTab(t){
+  document.getElementById('panel-cumpl').style.display    = (t==='cumpl')    ? '' : 'none';
+  document.getElementById('panel-sembrado').style.display = (t==='sembrado') ? '' : 'none';
+  document.getElementById('tabBtn-cumpl').classList.toggle('active', t==='cumpl');
+  document.getElementById('tabBtn-sembrado').classList.toggle('active', t==='sembrado');
+  if(t==='sembrado') renderSem();
+}
+
+function renderSem(){
+  const q  = (document.getElementById('sSearch').value||'').toLowerCase();
+  const ua = document.getElementById('sUA').value;
+  const tu = document.getElementById('sTurno').value;
+  const bl = document.getElementById('sBloque').value;
+  const sort = document.getElementById('sSort').value;
+
+  const rows = SEMBRADO_AD26.filter(r=>{
+    if(ua && r.ua!==ua) return false;
+    if(tu && semTurno(r.bloque)!==tu) return false;
+    if(bl && r.bloque!==bl) return false;
+    if(q && !(r.doc.toLowerCase().includes(q) || r.gpo.includes(q) ||
+              r.aula.toLowerCase().includes(q) || r.ua.toLowerCase().includes(q))) return false;
+    return true;
+  });
+
+  const byDoc = {};
+  rows.forEach(r=>{ (byDoc[r.cve]=byDoc[r.cve]||[]).push(r); });
+  const maxCarga = Math.max(1, ...Object.values(byDoc).map(v=>v.length));
+
+  let docs = Object.keys(byDoc);
+  const apellido = n=>{ const p=n.trim().split(/\s+/); return p.length<=2?p[p.length-1]:p.slice(-2).join(' '); };
+  if(sort==='carga')         docs.sort((a,b)=> byDoc[b].length-byDoc[a].length || byDoc[a][0].doc.localeCompare(byDoc[b][0].doc));
+  else if(sort==='apellido') docs.sort((a,b)=> apellido(byDoc[a][0].doc).localeCompare(apellido(byDoc[b][0].doc)));
+  else                       docs.sort();
+
+  let html='', i=0;
+  docs.forEach(cve=>{
+    const g = byDoc[cve].slice().sort((x,y)=> x.ua.localeCompare(y.ua) || x.gpo.localeCompare(y.gpo));
+    const d = g[0]; i++;
+    const open = semExpanded.has(cve);
+    const uas  = [...new Set(g.map(x=>x.ua))];
+    const w    = Math.round(g.length/maxCarga*70);
+    html += `<tr class="doc-row" onclick="toggleSem('${cve}')">
+      <td class="left" style="color:var(--muted);font-size:10px">${i}</td>
+      <td class="left td-name">${open?'▾':'▸'} ${d.doc} ${d.nuevo?'<span class="pill p-new">nuevo</span>':''}</td>
+      <td style="font-family:Consolas,monospace;font-size:10.5px;color:var(--muted)">${cve}</td>
+      <td><span class="carga-bar" style="width:${w}px"></span> <b style="color:var(--tpa)">${g.length}</b>
+          <span style="font-size:9.5px;color:var(--muted)">gpo${g.length===1?'':'s'}</span></td>
+      <td>${uas.map(u=>`<span class="ua ${uaCls(u)}">${u}</span>`).join(' ')}</td>
+      <td colspan="7" style="color:var(--muted);font-size:10.5px">
+        ${[...new Set(g.map(x=>x.bloque))].sort().map(b=>`<span class="pill ${semTurnoCls(b)}">${b}</span><span class="hora">${semHorario(b)}</span>`).join(' &nbsp;')}</td>
+    </tr>`;
+    if(open) g.forEach(r=>{
+      html += `<tr class="det-row">
+        <td></td><td colspan="4" class="left" style="color:var(--muted);font-size:10.5px;padding-left:22px">${SEM_UA_NOMBRE[r.ua]}</td>
+        <td><span class="ua ${uaCls(r.ua)}">${r.ua}</span></td>
+        <td><b>${r.gpo}</b></td>
+        <td><span class="aula">${r.aula}</span></td>
+        <td><span class="pill ${semTurnoCls(r.bloque)}">${r.bloque}</span><br><span class="hora">${semHorario(r.bloque)}</span></td>
+        <td style="font-size:10.5px">${r.dias}</td>
+        <td>${r.nr||'<span style="color:#bbb">—</span>'}</td>
+        <td><span style="font-size:10px;font-weight:700;color:${r.s==='A'?'#1E8449':'#6C757D'}">${r.s}</span></td>
+      </tr>`;
+    });
+  });
+  if(!docs.length) html = '<tr><td colspan="12" style="padding:26px;color:var(--muted)">Sin resultados con estos filtros.</td></tr>';
+  document.getElementById('semBody').innerHTML = html;
+
+  const nrTot = rows.reduce((a,b)=>a+b.nr,0);
+  document.getElementById('semFoot').innerHTML =
+    `<td colspan="3">TOTALES (filtrado)</td><td>${rows.length} grupos</td><td>${docs.length} docentes</td>
+     <td colspan="5"></td><td>${nrTot}</td><td></td>`;
+  semKpis();
+}
+
+function semKpis(){
+  const S=SEMBRADO_AD26;
+  const set=k=>new Set(S.map(r=>r[k])).size;
+  document.getElementById('sDoc').textContent  = set('cve');
+  document.getElementById('sGpo').textContent  = S.length;
+  document.getElementById('sLMC').textContent  = S.filter(r=>r.ua==='LMC').length;
+  document.getElementById('sLDA').textContent  = S.filter(r=>r.ua==='LDA').length;
+  document.getElementById('sIDA').textContent  = S.filter(r=>r.ua==='IDA').length;
+  document.getElementById('sAula').textContent = set('aula');
+  document.getElementById('sProm').textContent = (S.length/set('cve')).toFixed(1);
+  document.getElementById('sNew').textContent  = new Set(S.filter(r=>r.nuevo).map(r=>r.cve)).size;
+  document.getElementById('semCnt').textContent= S.length;
+}
+
+function initSem(){
+  const sel=document.getElementById('sBloque');
+  [...new Set(SEMBRADO_AD26.map(r=>r.bloque))]
+    .sort((a,b)=> semHoraIni(a).padStart(5,'0').localeCompare(semHoraIni(b).padStart(5,'0')))
+    .forEach(b=>{
+      const o=document.createElement('option'); o.value=b;
+      o.textContent = b+'  ·  '+semHorario(b); sel.appendChild(o);
+    });
+  const ch=semChoques();
+  const nuevos=[...new Map(SEMBRADO_AD26.filter(r=>r.nuevo).map(r=>[r.cve,r.doc])).values()];
+  document.getElementById('semNote').innerHTML =
+    `<b>Preliminar Agosto–Diciembre 2026 · Plan 440</b> — reporte UANL del 27/07/26. Documento sujeto a cambios; esta pestaña es solo de consulta y no afecta el seguimiento EJ26.<br>
+     <b>Validación:</b> ${ch.doc.length===0?'✅ sin traslapes de docente':'⚠️ '+ch.doc.length+' traslape(s) de docente'} ·
+     ${ch.aula.length===0?'✅ sin traslapes de aula':'⚠️ '+ch.aula.length+' traslape(s) de aula'} ·
+     todos los grupos en L–X–V salvo LMC 061 (sábado).<br>
+     <b>Docentes nuevos (${nuevos.length}):</b> ${nuevos.join(' · ')}.
+     <b>Sin carga en este preliminar (${SEM_SIN_CARGA.length}):</b> ${SEM_SIN_CARGA.join(' · ')}.<br>
+     <span style="font-size:10.5px;opacity:.85">NR = inscritos según el reporte · S = estatus del grupo (A/C). Confirmar lectura de estas dos columnas con Escolar.</span><br>
+     <b>Horas-clase (50 min):</b> ${Object.keys(SEM_HORA).map(k=>`<span class="hora-ref">${k} ${SEM_HORA[k][0]}-${SEM_HORA[k][1]}</span>`).join('')}`;
+  semKpis();
+}
+
+function exportSemCSV(){
+  const hdr=['CVE','Docente','UA','Unidad de aprendizaje','Grupo','Aula','Bloque','Horario','Hora inicio','Hora fin','Turno','Días','NR','S','Docente nuevo'];
+  const rows=SEMBRADO_AD26.map(r=>[r.cve,r.doc,r.ua,SEM_UA_NOMBRE[r.ua],r.gpo,r.aula,r.bloque,
+    semHorario(r.bloque),semHoraIni(r.bloque),semHoraFin(r.bloque),
+    semTurnoLbl(r.bloque),r.dias,r.nr,r.s,r.nuevo?'Sí':''].map(v=>`"${v}"`).join(','));
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,﻿'+encodeURIComponent([hdr.join(','),...rows].join('\n'));
+  a.download='Sembrado_AD26_Plan440_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click(); toast('⬇ Sembrado exportado');
+}
+
 // ── Indicador 1: % Asistencia Secretaría Académica (jIS + jCS) ──
 function pctSA(doc){
   const t = TEACH[doc]||{jIS:'',jIC:'',jCS:'',jCC:'',m1:''};
@@ -1966,6 +2426,7 @@ function load(){
           if(patch.lC === '✓' && row.lC !== '✓') { row.lC = '✓'; changed = true; }
           if(patch.pA === '✓' && row.pA !== '✓') { row.pA = '✓'; changed = true; }
           if(patch.fecha && !row.fecha)            { row.fecha = patch.fecha; changed = true; }
+          if(patch.acuse === '✓' && row.acuse !== '✓') { row.acuse = '✓'; changed = true; }
           if(patch.notas && !row.notas.includes(patch.notas)) {
             row.notas = (row.notas ? row.notas + ' | ' : '') + patch.notas; changed = true;
           }
@@ -2301,6 +2762,8 @@ if (READ_ONLY) {
 
 load();
 render();
+initSem();
+renderSem();
 </script>
 </body>
 </html>
