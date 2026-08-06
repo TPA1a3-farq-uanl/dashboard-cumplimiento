@@ -377,8 +377,16 @@ const ACT_COORD = ['jIC','jCC','m1'];     // Indicador 2 — Coordinación
 // ── Parches automáticos (escritos por la tarea programada) ──────────────────
 // FILE_UPDATE_TS: la tarea lo actualiza en cada corrida para forzar merge
 // AUTO_UPDATES: array de {doc, gpo, lC, pA, fecha, notas} detectados en Gmail
-const FILE_UPDATE_TS = '2026-08-03T09:00:00';
+const FILE_UPDATE_TS = '2026-08-06T08:00:00';
 const AUTO_UPDATES   = [
+  // ── Reconciliación de acuses 6-ago-2026 ───────────────────────────
+  // Verificado en bandeja SENT: acuses ya enviados (31-jul / 3-ago).
+  {doc:'ALEJANDRA TELLO BECERRIL',        gpo:'013', lC:'✓', pA:'✓', fecha:'2026-07-31', acuse:'✓', notas:'Acuse enviado 31-jul y 3-ago'},
+  {doc:'ALEJANDRA TELLO BECERRIL',        gpo:'021', lC:'✓', pA:'✓', fecha:'2026-07-31', acuse:'✓', notas:'Acuse enviado 31-jul y 3-ago'},
+  {doc:'ALMA MIREYA MARTINEZ MARTINEZ',   gpo:'037', lC:'✓', pA:'✓', fecha:'2026-07-30', acuse:'✓', notas:'Acuse enviado 31-jul'},
+  {doc:'ALMA MIREYA MARTINEZ MARTINEZ',   gpo:'064', lC:'✓', pA:'✓', fecha:'2026-07-30', acuse:'✓', notas:'Acuse enviado 31-jul'},
+  {doc:'ALMA MIREYA MARTINEZ MARTINEZ',   gpo:'029', lC:'✓', pA:'✓', fecha:'2026-07-30', acuse:'✓', notas:'Acuse enviado 31-jul'},
+  {doc:'NASHELLY RICANO ALARCON',         gpo:'033', lC:'✓', pA:'✓', fecha:'2026-07-31', acuse:'✓', notas:'Acuse enviado 3-ago'},
   // ── Backlog detectado en corrida 3-ago-2026 ───────────────────────
   // Correo recibido 31-jul 20:52 UTC, posterior a la corrida de ese día.
   {doc:'NASHELLY RICANO ALARCON', gpo:'033', lC:'✓', pA:'✓', fecha:'2026-07-31', notas:'Recibido 31-jul (carpeta Drive 02-LDA-033) | Borrador acuse creado 3-ago'},
