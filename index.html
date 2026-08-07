@@ -377,7 +377,7 @@ const ACT_COORD = ['jIC','jCC','m1'];     // Indicador 2 — Coordinación
 // ── Parches automáticos (escritos por la tarea programada) ──────────────────
 // FILE_UPDATE_TS: la tarea lo actualiza en cada corrida para forzar merge
 // AUTO_UPDATES: array de {doc, gpo, lC, pA, fecha, notas} detectados en Gmail
-const FILE_UPDATE_TS = '2026-08-06T08:00:00';
+const FILE_UPDATE_TS = '2026-08-07T09:30:00';
 const AUTO_UPDATES   = [
   // ── Reconciliación de acuses 6-ago-2026 ───────────────────────────
   // Verificado en bandeja SENT: acuses ya enviados (31-jul / 3-ago).
@@ -460,7 +460,11 @@ const AUTO_UPDATES   = [
   {doc:'LUIS ENRIQUE OMANA TIJERINA',       gpo:'023', acuse:'✓', notas:'Acuse enviado 8-jul'},
   // Pendiente real: LUIS ALFONSO DE LA FUENTE SUAREZ (LMC 014) — evidencias
   // recibidas 19-jun sin acuse; borrador creado 29-jul.
-  {doc:'LUIS ALFONSO DE LA FUENTE SUAREZ',  gpo:'014', notas:'Sin acuse desde 19-jun | Borrador acuse creado 29-jul'},
+  // LUIS ALFONSO DE LA FUENTE SUAREZ (LMC 014) — RESUELTO 6-ago-2026:
+  // acuse verificado como ENVIADO el 22-jun-2026 (msg 19ef0102614921de).
+  {doc:'LUIS ALFONSO DE LA FUENTE SUAREZ',  gpo:'014', acuse:'✓', notas:'Acuse enviado 22-jun-2026 (verificado en bandeja SENT)'},
+  // Diana Laura Guerrero Reyes — LMC 017 (antes registrado como ANDREA GARCIA) — 27-jun
+  {doc:'DIANA LAURA GUERRERO REYES', gpo:'017', lC:'✓', pA:'✓', fecha:'2026-06-27', acuse:'✓', notas:'Evidencias LMC 017 recibidas 27-jun | Acuse enviado 1-jul (diana.guerrerorys@uanl.edu.mx)'},
 ];
   // Correos alternos detectados (el docente escribe desde una cuenta distinta a la registrada):
   // Fermina Hinojosa → saeydi.farq@gmail.com · Dinorah Luna → arqadrianaluna.farq@gmail.com
