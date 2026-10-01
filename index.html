@@ -126,45 +126,10 @@ tfoot td { background: var(--dark); color: #BDD7EE; font-weight: 700; padding: 7
 .modal-btns { display: flex; gap: 8px; margin-top: 16px; justify-content: flex-end; }
 
 footer { text-align: center; padding: 10px; font-size: 10px; color: var(--muted); }
-
-/* ── Pestañas ── */
-.tabs { background: #fff; border-bottom: 2px solid var(--border); padding: 0 20px; display: flex; gap: 2px; }
-.tab { background: transparent; border: none; border-bottom: 3px solid transparent; padding: 10px 18px; font-size: 12.5px; font-weight: 600; color: var(--muted); cursor: pointer; font-family: inherit; transition: color .15s, border-color .15s, background .15s; }
-.tab:hover { background: var(--gray-bg); color: var(--dark); }
-.tab.active { color: var(--dark); border-bottom-color: var(--mid); background: #F0F6FF; }
-.tab .cnt { display: inline-block; background: var(--light); color: var(--dark); border-radius: 9px; padding: 0 6px; font-size: 10px; margin-left: 6px; }
-.tab.active .cnt { background: var(--mid); color: #fff; }
-
-/* ── Sembrado ── */
-.th-sem { background: #6C3483; color: #fff; }
-.th-sem2{ background: #4A235A; color: #fff; }
-.pill { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 10px; font-weight: 700; }
-.p-mat { background: #FDEBD0; color: #7E5109; }
-.p-ves { background: #D4E6F1; color: #1A5276; }
-.p-noc { background: #D6DBDF; color: #2C3E50; }
-.p-new { background: #FADBD8; color: #922B21; }
-.aula  { font-family: 'Consolas','Courier New',monospace; font-size: 11px; background: var(--gray-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; }
-.hora  { font-family: 'Consolas','Courier New',monospace; font-size: 10px; color: var(--muted); white-space: nowrap; margin-left: 3px; }
-.hora-ref { display: inline-block; font-family: 'Consolas','Courier New',monospace; font-size: 10px; background: rgba(255,255,255,.6); border: 1px solid rgba(133,100,4,.25); border-radius: 4px; padding: 0 5px; margin: 2px 3px 0 0; }
-.carga-bar { display: inline-block; height: 7px; border-radius: 4px; background: var(--tpa); vertical-align: middle; }
-.note-box { background: #FFF3CD; border-left: 4px solid #B7950B; padding: 9px 14px; margin: 12px 20px 0; border-radius: 6px; font-size: 11.5px; color: #856404; line-height: 1.6; }
-.note-box b { color: #6b4e03; }
-
-/* ── Modo solo lectura (GitHub Pages) ── */
-body.read-only .chip { cursor: default !important; pointer-events: none !important; }
-body.read-only input[type="text"],
-body.read-only input[type="date"] { pointer-events: none !important; background: transparent !important; border-color: transparent !important; color: var(--muted); }
-body.read-only .btn-primary { display: none !important; }
-body.read-only .btn-success { display: none !important; }
-body.read-only #fSort { display: none !important; }
-.ro-banner { background: #1F3864; color: #BDD7EE; text-align: center; padding: 5px; font-size: 11px; font-weight: 600; letter-spacing: .3px; display: none; }
-body.read-only .ro-banner { display: block; }
-body.read-only .ro-hide  { display: none !important; }
 </style>
 </head>
 <body>
 
-<div class="ro-banner">🔒 Modo visualización — Solo lectura · Para editar: Dashboard_Cumplimiento_Docente.html (local)</div>
 <div class="header">
   <div class="header-top">
     <div>
@@ -182,13 +147,6 @@ body.read-only .ro-hide  { display: none !important; }
   </div>
 </div>
 
-<div class="tabs">
-  <button class="tab active" id="tabBtn-cumpl"    onclick="switchTab('cumpl')">📋 Cumplimiento AD26</button>
-  <button class="tab"        id="tabBtn-sembrado" onclick="switchTab('sembrado')">🗓️ Sembrado Ago–Dic 2026 <span class="cnt" id="semCnt">—</span></button>
-</div>
-
-<div id="panel-cumpl">
-
 <div class="kpi-row">
   <div class="kpi blue">  <div class="num" id="kDoc">—</div>  <div class="lbl">Docentes</div></div>
   <div class="kpi blue">  <div class="num" id="kGpo">—</div>  <div class="lbl">Grupos</div></div>
@@ -197,7 +155,7 @@ body.read-only .ro-hide  { display: none !important; }
   <div class="kpi red">   <div class="num" id="kBajo">—</div> <div class="lbl">Bajo</div></div>
   <div class="kpi green"> <div class="num" id="kEvid">—</div> <div class="lbl">Evidencias OK</div></div>
   <div class="kpi red">   <div class="num" id="kPend">—</div> <div class="lbl">Evid. Pend.</div></div>
-  <div class="kpi purple"><div class="num" id="kGen">—</div>  <div class="lbl">% Final Coord.</div></div>
+  <div class="kpi purple"><div class="num" id="kGen">—</div>  <div class="lbl">% General</div></div>
 </div>
 
 <div class="toolbar">
@@ -214,13 +172,8 @@ body.read-only .ro-hide  { display: none !important; }
     <option value="pend">Evidencias pendientes</option>
     <option value="warn">Con alertas</option>
   </select>
-  <select id="fSort" onchange="sortMode=this.value;render()" title="Ordenar docentes">
-    <option value="lista">Orden de lista</option>
-    <option value="apellido">A–Z por apellido</option>
-  </select>
   <button class="btn btn-primary" onclick="openAdd()">+ Agregar</button>
   <button class="btn btn-success" onclick="exportCSV()">⬇ CSV</button>
-  <button id="btnConnect" class="btn ro-hide" onclick="connectFile()" title="Conecta el archivo HTML para que cada edición se guarde automáticamente (Chrome/Edge)">🔗 Conectar archivo</button>
   <div class="spacer"></div>
   <div class="ua-legend">
     <span class="ua-pill" style="background:#D6EAF8;color:#1A5276">■ LMC</span>
@@ -241,16 +194,15 @@ body.read-only .ro-hide  { display: none !important; }
       <th class="left th-main" rowspan="3" style="min-width:170px">Docente</th>
       <th class="th-main" rowspan="3" style="width:55px">UA</th>
       <th class="th-main" rowspan="3" style="width:80px">Grupos</th>
-      <th colspan="5" class="th-act">Actividades (por docente)</th>
+      <th colspan="4" class="th-act">Actividades (por docente)</th>
       <th colspan="2" class="th-evid" rowspan="2">Evidencias (por grupo)</th>
-      <th id="th-seg-group" colspan="3" class="th-seg" rowspan="2">Seguimiento</th>
-      <th class="th-pct" rowspan="3" style="min-width:100px">% Cumpl.<br><span style="font-weight:400;font-size:9px">Final = Coord 50% + Evid 50%</span></th>
-      <th class="th-main ro-hide" rowspan="3" style="min-width:120px;text-align:left">Notas</th>
+      <th colspan="3" class="th-seg" rowspan="2">Seguimiento</th>
+      <th class="th-pct" rowspan="3" style="width:80px">% Cumpl.</th>
+      <th class="th-main" rowspan="3" style="min-width:120px;text-align:left">Notas</th>
     </tr>
     <tr>
       <th colspan="2" class="th-act" style="font-size:10px">Secretaría Académica</th>
       <th colspan="2" class="th-act" style="font-size:10px">Coordinación</th>
-      <th class="th-act" rowspan="2" style="font-size:10px;min-width:60px">Mesa de<br>Trabajo</th>
     </tr>
     <tr>
       <th class="th-act" style="min-width:48px">Inicio</th>
@@ -261,85 +213,13 @@ body.read-only .ro-hide  { display: none !important; }
       <th class="th-evid" style="min-width:52px">Proyecto<br>Alumno</th>
       <th class="th-seg" style="min-width:90px">Fecha<br>Entrega</th>
       <th class="th-seg" style="min-width:52px">Acuse<br>Enviado</th>
-      <th class="th-seg ro-hide" style="min-width:80px">Correo</th>
+      <th class="th-seg" style="min-width:80px">Correo</th>
     </tr>
   </thead>
   <tbody id="tbody"></tbody>
   <tfoot><tr id="tfoot"></tr></tfoot>
 </table>
 </div>
-
-</div><!-- /panel-cumpl -->
-
-<div id="panel-sembrado" style="display:none">
-
-  <div class="kpi-row">
-    <div class="kpi purple"><div class="num" id="sDoc">—</div>  <div class="lbl">Docentes</div></div>
-    <div class="kpi purple"><div class="num" id="sGpo">—</div>  <div class="lbl">Grupos</div></div>
-    <div class="kpi blue">  <div class="num" id="sLMC">—</div>  <div class="lbl">LMC</div></div>
-    <div class="kpi green"> <div class="num" id="sLDA">—</div>  <div class="lbl">LDA</div></div>
-    <div class="kpi yellow"><div class="num" id="sIDA">—</div>  <div class="lbl">IDA</div></div>
-    <div class="kpi blue">  <div class="num" id="sAula">—</div> <div class="lbl">Aulas</div></div>
-    <div class="kpi green"> <div class="num" id="sProm">—</div> <div class="lbl">Carga prom.</div></div>
-    <div class="kpi red">   <div class="num" id="sNew">—</div>  <div class="lbl">Docentes nuevos</div></div>
-  </div>
-
-  <div class="toolbar">
-    <input type="text" id="sSearch" placeholder="🔍 Buscar docente, grupo o aula…" oninput="renderSem()">
-    <select id="sUA" onchange="renderSem()">
-      <option value="">Todas las UA</option>
-      <option>LMC</option><option>LDA</option><option>IDA</option>
-    </select>
-    <select id="sTurno" onchange="renderSem()">
-      <option value="">Todos los turnos</option>
-      <option value="M">Matutino</option>
-      <option value="V">Vespertino</option>
-      <option value="N">Nocturno</option>
-    </select>
-    <select id="sBloque" onchange="renderSem()">
-      <option value="">Todos los bloques</option>
-    </select>
-    <select id="sSort" onchange="renderSem()">
-      <option value="carga">Mayor carga primero</option>
-      <option value="apellido">A–Z por apellido</option>
-      <option value="cve">Por clave (CVE)</option>
-    </select>
-    <button class="btn btn-success" onclick="exportSemCSV()">⬇ CSV</button>
-    <div class="spacer"></div>
-    <div class="ua-legend">
-      <span class="pill p-mat">■ Matutino</span>
-      <span class="pill p-ves">■ Vespertino</span>
-      <span class="pill p-noc">■ Nocturno</span>
-      <span class="pill p-new">▲ Docente nuevo</span>
-    </div>
-  </div>
-
-  <div class="note-box" id="semNote"></div>
-
-  <div class="table-wrap">
-  <table>
-    <thead>
-      <tr>
-        <th class="left th-sem" style="width:26px">#</th>
-        <th class="left th-sem" style="min-width:230px">Docente</th>
-        <th class="th-sem" style="width:70px">CVE</th>
-        <th class="th-sem" style="min-width:110px">Carga</th>
-        <th class="th-sem" style="min-width:150px">Unidades de aprendizaje</th>
-        <th class="th-sem2" style="min-width:70px">UA</th>
-        <th class="th-sem2" style="min-width:55px">Grupo</th>
-        <th class="th-sem2" style="min-width:60px">Aula</th>
-        <th class="th-sem2" style="min-width:95px">Bloque / Horario</th>
-        <th class="th-sem2" style="min-width:60px">Días</th>
-        <th class="th-sem2" style="min-width:45px">NR</th>
-        <th class="th-sem2" style="min-width:35px">S</th>
-      </tr>
-    </thead>
-    <tbody id="semBody"></tbody>
-    <tfoot><tr id="semFoot"></tr></tfoot>
-  </table>
-  </div>
-
-</div><!-- /panel-sembrado -->
 
 <div class="modal-bg" id="modalBg">
   <div class="modal">
@@ -364,2143 +244,205 @@ body.read-only .ro-hide  { display: none !important; }
 </div>
 
 <div id="toast"></div>
-<footer>SA FARQ UANL &nbsp;·&nbsp; Talleres de Proyectos 1°–3er Semestre &nbsp;·&nbsp; Dashboard de Cumplimiento AD26 &nbsp;·&nbsp; % Final = Coord. 50% + Evidencias 50%</footer>
+<footer>SA FARQ UANL &nbsp;·&nbsp; Talleres de Proyectos 1°–3er Semestre &nbsp;·&nbsp; Dashboard de Cumplimiento EJ26</footer>
 
 <script>
-const ACT  = ['jIS','jIC','jCS','jCC','m1'];
-const ACT_LBL = ['Junta Inicio SA','Junta Inicio Coord.','Junta Cierre SA','Junta Cierre Coord.','Mesa de Trabajo'];
+const ACT  = ['jIS','jIC','jCS','jCC'];
+const ACT_LBL = ['Junta Inicio SA','Junta Inicio Coord.','Junta Cierre SA','Junta Cierre Coord.'];
 const EVID = ['lC','pA'];
 const EVID_LBL = ['Lista Control','Proyecto Alumno'];
-const ACT_SA    = ['jIS','jCS'];          // Indicador 1 — Secretaría Académica
-const ACT_COORD = ['jIC','jCC','m1'];     // Indicador 2 — Coordinación
-
-// ── Parches automáticos (escritos por la tarea programada) ──────────────────
-// FILE_UPDATE_TS: la tarea lo actualiza en cada corrida para forzar merge
-// AUTO_UPDATES: array de {doc, gpo, lC, pA, fecha, notas} detectados en Gmail
-const FILE_UPDATE_TS = '2026-08-24T14:23:15';
-const AUTO_UPDATES   = [
-  // -- Reconciliacion de acuses 24-ago-2026 --------------------------
-  // Verificado en bandeja SENT: acuse enviado el 21-ago 14:54 UTC.
-  {doc:'JESUS ARTEMIO RUIZ ESPARZA', gpo:'010', acuse:'✓', notas:'Acuse enviado 21-ago'},
-  {doc:'JESUS ARTEMIO RUIZ ESPARZA', gpo:'036', acuse:'✓', notas:'Acuse enviado 21-ago'},
-  {doc:'JESUS ARTEMIO RUIZ ESPARZA', gpo:'024', acuse:'✓', notas:'Acuse enviado 21-ago'},
-  {doc:'JESUS ARTEMIO RUIZ ESPARZA', gpo:'030', acuse:'✓', notas:'Acuse enviado 21-ago'},
-  // -- Reconciliacion de acuses 21-ago-2026 --------------------------
-  // Verificado en bandeja SENT: acuses enviados el 19-ago 16:33 UTC.
-  {doc:'FABIOLA ROMERO HUERTA', gpo:'016', acuse:'✓', notas:'Acuse enviado 19-ago'},
-  {doc:'FABIOLA ROMERO HUERTA', gpo:'009', acuse:'✓', notas:'Acuse enviado 19-ago'},
-  {doc:'JAVIER MEDELLIN PALACIOS', gpo:'AJ-01', acuse:'✓', notas:'Acuse enviado 19-ago'},
-  {doc:'OFELIA EDITH CASTILLO ORTIZ', gpo:'030', acuse:'✓', notas:'Acuse enviado 19-ago'},
-  // -- Evidencias recibidas 19-ago-2026 (corrida 21-ago) -------------
-  {doc:'JESUS ARTEMIO RUIZ ESPARZA', gpo:'010', lC:'✓', pA:'✓', fecha:'2026-08-19', notas:'Recibido 19-ago (ruizesparza89@gmail.com) | EVID. LMC ENE-JUN 26.pdf | Borrador acuse creado 21-ago'},
-  {doc:'JESUS ARTEMIO RUIZ ESPARZA', gpo:'036', lC:'✓', pA:'✓', fecha:'2026-08-19', notas:'Recibido 19-ago (ruizesparza89@gmail.com) | EVID. LDA ENE-JUN 26.pdf | Borrador acuse creado 21-ago'},
-  {doc:'JESUS ARTEMIO RUIZ ESPARZA', gpo:'024', lC:'✓', pA:'✓', fecha:'2026-08-19', notas:'Recibido 19-ago (ruizesparza89@gmail.com) | EVID. IDA ENE-JUN 26.pdf (cubre gpos 024 y 030, contenido por verificar) | Borrador acuse creado 21-ago'},
-  {doc:'JESUS ARTEMIO RUIZ ESPARZA', gpo:'030', lC:'✓', pA:'✓', fecha:'2026-08-19', notas:'Recibido 19-ago (ruizesparza89@gmail.com) | EVID. IDA ENE-JUN 26.pdf (cubre gpos 024 y 030, contenido por verificar) | Borrador acuse creado 21-ago'},
-  // -- Evidencias recibidas 17/18/19-ago-2026 (corrida 19-ago) -------
-  {doc:'FABIOLA ROMERO HUERTA', gpo:'016', lC:'✓', pA:'✓', fecha:'2026-08-19', notas:'Recibido 19-ago (fabiolar56@gmail.com) | Control de Evaluacion IDA gpo 016 + PIA Rodolfo | Borrador acuse creado 19-ago'},
-  {doc:'FABIOLA ROMERO HUERTA', gpo:'009', lC:'✓', pA:'✓', fecha:'2026-08-19', notas:'Recibido 19-ago (fabiolar56@gmail.com) | Control de Evaluacion IDA gpo 009 + PIA Ambar | Borrador acuse creado 19-ago'},
-  {doc:'JAVIER MEDELLIN PALACIOS', gpo:'AJ-01', lC:'✓', pA:'✓', fecha:'2026-08-18', notas:'Recibido 18-ago (javier.medellinp@uanl.edu.mx) | Hoja Control de Evaluaciones AJ1 (xlsx) + 2 fotos evidencia | Enlaces SharePoint UANL | Borrador acuse creado 19-ago'},
-  {doc:'OFELIA EDITH CASTILLO ORTIZ', gpo:'030', lC:'✓', pA:'', fecha:'2026-08-17', notas:'Recibido 17-ago (edicastarq@gmail.com - correo alterno de edicostarg@gmail.com) | 1 PDF EVIDENCIA LDA GPO 030 | pA por verificar dentro del PDF | Borrador acuse creado 19-ago'},
-  // ── Reconciliación de acuses 13-ago-2026 ──────────────────────────
-  // Verificado en bandeja SENT: acuses enviados el 12-ago 14:53/14:54 UTC.
-  {doc:'MARCELA LIZETH MENDOZA VAZQUEZ', gpo:'004', lC:'✓', pA:'✓', fecha:'2026-08-07', acuse:'✓', notas:'Acuse enviado 12-ago'},
-  {doc:'MARCELA LIZETH MENDOZA VAZQUEZ', gpo:'011', lC:'✓', pA:'✓', fecha:'2026-08-07', acuse:'✓', notas:'Acuse enviado 12-ago'},
-  {doc:'MARCELA LIZETH MENDOZA VAZQUEZ', gpo:'017', lC:'✓', pA:'✓', fecha:'2026-08-07', acuse:'✓', notas:'Acuse enviado 12-ago'},
-  {doc:'JESUS ALBERTO CANAVATI ESPINOSA', gpo:'027', lC:'✓', pA:'✓', fecha:'2026-08-11', acuse:'✓', notas:'Acuse enviado 12-ago'},
-  // ── Backlog detectado en corrida 12-ago-2026 ──────────────────────
-  // Correo recibido 7-ago 19:50 UTC; se saltó las corridas del 7 y 11.
-  {doc:'MARCELA LIZETH MENDOZA VAZQUEZ', gpo:'004', lC:'✓', pA:'✓', fecha:'2026-08-07', notas:'Recibido 7-ago (arq.marcelamendoza@gmail.com) | 3 PDF calificaciones + 3 PIA | Mapeo de grupo inferido | Borrador acuse creado 12-ago'},
-  {doc:'MARCELA LIZETH MENDOZA VAZQUEZ', gpo:'011', lC:'✓', pA:'✓', fecha:'2026-08-07', notas:'Recibido 7-ago (arq.marcelamendoza@gmail.com) | 3 PDF calificaciones + 3 PIA | Mapeo de grupo inferido | Borrador acuse creado 12-ago'},
-  {doc:'MARCELA LIZETH MENDOZA VAZQUEZ', gpo:'017', lC:'✓', pA:'✓', fecha:'2026-08-07', notas:'Recibido 7-ago (arq.marcelamendoza@gmail.com) | 3 PDF calificaciones + 3 PIA | Mapeo de grupo inferido | Borrador acuse creado 12-ago'},
-  // ── Evidencias recibidas 11-ago-2026 (corrida 11-ago) ─────────────────────
-  {doc:'JESUS ALBERTO CANAVATI ESPINOSA', gpo:'027', lC:'✓', pA:'✓', fecha:'2026-08-11', notas:'Recibido 11-ago (alberto.canavati@gmail.com) | Hoja evaluación LDA-027 + 5 evidencias JPEG | Borrador acuse creado 11-ago'},
-  // ── Reconciliación de acuses 11-ago-2026 ──────────────────────────────────
-  // Verificado en bandeja SENT: acuses enviados el 7-ago 18:22 UTC.
-  {doc:'ALEJANDRA MINERVA BENAVIDES LOZANO', gpo:'001', lC:'✓', pA:'✓', fecha:'2026-08-06', acuse:'✓', notas:'Acuse enviado 7-ago'},
-  {doc:'ALEJANDRA MINERVA BENAVIDES LOZANO', gpo:'031', lC:'✓', pA:'✓', fecha:'2026-08-06', acuse:'✓', notas:'Acuse enviado 7-ago'},
-  // ── Evidencias recibidas 6-ago-2026 (corrida 7-ago) ───────────────
-  {doc:'ALEJANDRA MINERVA BENAVIDES LOZANO', gpo:'001', lC:'✓', pA:'✓', fecha:'2026-08-06', notas:'Recibido 6-ago (arq.minerva.benavides@outlook.com) | EVALUACION.xlsx + 4 PIA | Borrador acuse creado 7-ago'},
-  {doc:'ALEJANDRA MINERVA BENAVIDES LOZANO', gpo:'031', lC:'✓', pA:'✓', fecha:'2026-08-06', notas:'Recibido 6-ago (arq.minerva.benavides@outlook.com) | EVIDENCIAS LMC 031.xlsx + 4 PIA | Borrador acuse creado 7-ago'},
-  // ── Reconciliación de acuses 6-ago-2026 ───────────────────────────
-  // Verificado en bandeja SENT: acuses ya enviados (31-jul / 3-ago).
-  {doc:'ALEJANDRA TELLO BECERRIL',        gpo:'013', lC:'✓', pA:'✓', fecha:'2026-07-31', acuse:'✓', notas:'Acuse enviado 31-jul y 3-ago'},
-  {doc:'ALEJANDRA TELLO BECERRIL',        gpo:'021', lC:'✓', pA:'✓', fecha:'2026-07-31', acuse:'✓', notas:'Acuse enviado 31-jul y 3-ago'},
-  {doc:'ALMA MIREYA MARTINEZ MARTINEZ',   gpo:'037', lC:'✓', pA:'✓', fecha:'2026-07-30', acuse:'✓', notas:'Acuse enviado 31-jul'},
-  {doc:'ALMA MIREYA MARTINEZ MARTINEZ',   gpo:'064', lC:'✓', pA:'✓', fecha:'2026-07-30', acuse:'✓', notas:'Acuse enviado 31-jul'},
-  {doc:'ALMA MIREYA MARTINEZ MARTINEZ',   gpo:'029', lC:'✓', pA:'✓', fecha:'2026-07-30', acuse:'✓', notas:'Acuse enviado 31-jul'},
-  {doc:'NASHELLY RICANO ALARCON',         gpo:'033', lC:'✓', pA:'✓', fecha:'2026-07-31', acuse:'✓', notas:'Acuse enviado 3-ago'},
-  // ── Backlog detectado en corrida 3-ago-2026 ───────────────────────
-  // Correo recibido 31-jul 20:52 UTC, posterior a la corrida de ese día.
-  {doc:'NASHELLY RICANO ALARCON', gpo:'033', lC:'✓', pA:'✓', fecha:'2026-07-31', notas:'Recibido 31-jul (carpeta Drive 02-LDA-033) | Borrador acuse creado 3-ago'},
-  // ── Evidencias recibidas 31-jul-2026 ──────────────────────────────────────
-  {doc:'ALEJANDRA TELLO BECERRIL', gpo:'013', lC:'✓', pA:'✓', fecha:'2026-07-31', notas:'Recibido por correo 31-jul'},
-  {doc:'ALEJANDRA TELLO BECERRIL', gpo:'021', lC:'✓', pA:'✓', fecha:'2026-07-31', notas:'Recibido por correo 31-jul'},
-  // ── Evidencias recibidas 30-jul-2026 (corrida 31-jul) ─────────────────────
-  {doc:'ALMA MIREYA MARTINEZ MARTINEZ', gpo:'037', lC:'✓', pA:'✓', fecha:'2026-07-30', notas:'Recibido 30-jul | Control LMC 037 + 3 PIA | Borrador acuse 31-jul'},
-  {doc:'ALMA MIREYA MARTINEZ MARTINEZ', gpo:'064', lC:'✓', pA:'✓', fecha:'2026-07-30', notas:'Recibido 30-jul | Control LMC 064 + 3 PIA | Borrador acuse 31-jul'},
-  {doc:'ALMA MIREYA MARTINEZ MARTINEZ', gpo:'029', lC:'✓', pA:'✓', fecha:'2026-07-30', notas:'Recibido 30-jul | Control IDA 029 + 2 PIA | Borrador acuse 31-jul'},
-  // ── Reconciliación de acuses 29-jul-2026 ──────────────────────────────────
-  // Auditoría de la bandeja de evidencias.composicion@gmail.com: 44 acuses
-  // ("Confirmamos la recepción…") ya fueron ENVIADOS pero el campo acuse
-  // seguía vacío en el dashboard. Se marcan aquí con la fecha real de envío.
-  {doc:'GUILIANA LIZBETH GALLARDO HURTADO', gpo:'002', lC:'✓', pA:'✓', fecha:'2026-07-24', acuse:'✓', notas:'Acuse enviado 28-jul'},
-  {doc:'GUILIANA LIZBETH GALLARDO HURTADO', gpo:'015', lC:'✓', pA:'✓', fecha:'2026-07-24', acuse:'✓', notas:'Acuse enviado 28-jul'},
-  {doc:'GABRIELA ALEJANDRA ALBUERNE KELLY', gpo:'002', acuse:'✓', notas:'Acuse enviado 1-jul'},
-  {doc:'GABRIELA ALEJANDRA ALBUERNE KELLY', gpo:'023', acuse:'✓', notas:'Acuse enviado 1-jul'},
-  {doc:'MARIA ELISA VAZQUEZ COVARRUBIAS',   gpo:'004', acuse:'✓', notas:'Acuse enviado 22-jun'},
-  {doc:'MARIA ELISA VAZQUEZ COVARRUBIAS',   gpo:'029', acuse:'✓', notas:'Acuse enviado 22-jun'},
-  {doc:'MARIA ELISA VAZQUEZ COVARRUBIAS',   gpo:'036', acuse:'✓', notas:'Acuse enviado 22-jun'},
-  {doc:'GABRIELA PACHUCA CASTRUITA',        gpo:'005', acuse:'✓', notas:'Acuse enviado 20-jul'},
-  {doc:'GABRIELA PACHUCA CASTRUITA',        gpo:'028', acuse:'✓', notas:'Acuse enviado 20-jul'},
-  {doc:'GABRIELA PACHUCA CASTRUITA',        gpo:'035', acuse:'✓', notas:'Acuse enviado 20-jul'},
-  {doc:'FERMINA HINOJOSA VAZQUEZ',          gpo:'006', acuse:'✓', notas:'Acuse enviado 3-jul (saeydi.farq@gmail.com)'},
-  {doc:'FERMINA HINOJOSA VAZQUEZ',          gpo:'008', acuse:'✓', notas:'Acuse enviado 3-jul (saeydi.farq@gmail.com)'},
-  {doc:'DIANA JANETTE HERNANDEZ PENILLA',   gpo:'007', acuse:'✓', notas:'Acuse enviado 20-jul'},
-  {doc:'DIANA JANETTE HERNANDEZ PENILLA',   gpo:'011', acuse:'✓', notas:'Acuse enviado 20-jul'},
-  {doc:'DIANA JANETTE HERNANDEZ PENILLA',   gpo:'024', acuse:'✓', notas:'Acuse enviado 20-jul'},
-  {doc:'DIANA JANETTE HERNANDEZ PENILLA',   gpo:'060', acuse:'✓', notas:'Acuse enviado 20-jul'},
-  {doc:'MARIA MARLEN DE LEON CEPEDA',       gpo:'009', acuse:'✓', notas:'Acuse enviado 20-jul'},
-  {doc:'MARIA MARLEN DE LEON CEPEDA',       gpo:'022', acuse:'✓', notas:'Acuse enviado 20-jul'},
-  {doc:'MARIA MARLEN DE LEON CEPEDA',       gpo:'015', acuse:'✓', notas:'Acuse enviado 20-jul'},
-  {doc:'MARIA MARLEN DE LEON CEPEDA',       gpo:'012', acuse:'✓', notas:'Acuse enviado 20-jul'},
-  {doc:'MIRIEL RIVERA SOTO',                gpo:'015', acuse:'✓', notas:'Acuse enviado 1-jul'},
-  {doc:'MIRIEL RIVERA SOTO',                gpo:'010', acuse:'✓', notas:'Acuse enviado 1-jul'},
-  {doc:'CARMEN LUCERO CORONADO GONZALEZ',   gpo:'018', acuse:'✓', notas:'Acuse enviado 6-jul'},
-  {doc:'CARMEN LUCERO CORONADO GONZALEZ',   gpo:'032', acuse:'✓', notas:'Acuse enviado 6-jul'},
-  {doc:'CARMEN LUCERO CORONADO GONZALEZ',   gpo:'069', acuse:'✓', notas:'Acuse enviado 6-jul'},
-  {doc:'CARMEN LUCERO CORONADO GONZALEZ',   gpo:'003', acuse:'✓', notas:'Acuse enviado 6-jul'},
-  {doc:'ROBERTO EFRAIN PALOMO MARTINEZ',    gpo:'033', acuse:'✓', notas:'Acuse enviado 22-jun'},
-  {doc:'ROBERTO EFRAIN PALOMO MARTINEZ',    gpo:'068', acuse:'✓', notas:'Acuse enviado 22-jun'},
-  {doc:'ROBERTO EFRAIN PALOMO MARTINEZ',    gpo:'008', acuse:'✓', notas:'Acuse enviado 22-jun'},
-  {doc:'ROBERTO EFRAIN PALOMO MARTINEZ',    gpo:'035', acuse:'✓', notas:'Acuse enviado 22-jun'},
-  {doc:'BERTIN MAURICIO ZAVALA RUGERIO',    gpo:'038', acuse:'✓', notas:'Acuse enviado 23-jun'},
-  {doc:'OSVALDO ANTONIO GARCIA MOLINA',     gpo:'061', acuse:'✓', notas:'Acuse enviado 6-jul'},
-  {doc:'OSVALDO ANTONIO GARCIA MOLINA',     gpo:'066', acuse:'✓', notas:'Acuse enviado 6-jul'},
-  {doc:'YEYMI GUADALUPE HERNANDEZ RIVERA',  gpo:'063',   acuse:'✓', notas:'Acuse enviado 1-jul'},
-  {doc:'YEYMI GUADALUPE HERNANDEZ RIVERA',  gpo:'022',   acuse:'✓', notas:'Acuse enviado 1-jul'},
-  {doc:'YEYMI GUADALUPE HERNANDEZ RIVERA',  gpo:'028',   acuse:'✓', notas:'Acuse enviado 1-jul'},
-  {doc:'YEYMI GUADALUPE HERNANDEZ RIVERA',  gpo:'AJ-02', acuse:'✓', notas:'Acuse enviado 1-jul'},
-  {doc:'DINORAH ADRIANA LUNA CASAS',        gpo:'067', acuse:'✓', notas:'Acuse enviado 24-jul (arqadrianaluna.farq@gmail.com)'},
-  {doc:'DINORAH ADRIANA LUNA CASAS',        gpo:'007', acuse:'✓', notas:'Acuse enviado 24-jul (arqadrianaluna.farq@gmail.com)'},
-  {doc:'JAVIER ISAAC GARZA ZUNIGA',         gpo:'001', acuse:'✓', notas:'Acuse enviado 21-jul'},
-  {doc:'LUCIO ESAU RODRIGUEZ DAVALOS',      gpo:'002', acuse:'✓', notas:'Acuse enviado 24-jul'},
-  {doc:'MONICA PATRICIA ORTIZ DIAZ',        gpo:'005', acuse:'✓', notas:'Acuse enviado 22-jun'},
-  {doc:'MONICA PATRICIA ORTIZ DIAZ',        gpo:'029', acuse:'✓', notas:'Acuse enviado 22-jun'},
-  {doc:'SONIA GUADALUPE RIVERA CASTILLO',   gpo:'009', acuse:'✓', notas:'Acuse enviado 1-jul (soniariverac@hotmail.com)'},
-  {doc:'SONIA GUADALUPE RIVERA CASTILLO',   gpo:'025', acuse:'✓', notas:'Acuse enviado 1-jul (soniariverac@hotmail.com)'},
-  {doc:'ARNULFO ALVARADO RUIZ',             gpo:'012', acuse:'✓', notas:'Acuse enviado 24-jul'},
-  {doc:'ARNULFO ALVARADO RUIZ',             gpo:'007', acuse:'✓', notas:'Acuse enviado 24-jul'},
-  {doc:'SARAHI ALVARADO VILLARREAL',        gpo:'020', acuse:'✓', notas:'Acuse enviado 22-jun'},
-  {doc:'SARAHI ALVARADO VILLARREAL',        gpo:'034', acuse:'✓', notas:'Acuse enviado 22-jun'},
-  {doc:'ANA MARIA HERNANDEZ PEREZ',         gpo:'026', acuse:'✓', notas:'Acuse enviado 2-jul'},
-  {doc:'ANA MARIA HERNANDEZ PEREZ',         gpo:'032', acuse:'✓', notas:'Acuse enviado 6-jul'},
-  {doc:'ANA MARIA HERNANDEZ PEREZ',         gpo:'019', acuse:'✓', notas:'Acuse enviado 6-jul'},
-  {doc:'PALMIRA CECILIA VALENZUELA TAMEZ',  gpo:'006', acuse:'✓', notas:'Acuse enviado 1-jul (palmira.valenzuelatm@uanl.edu.mx)'},
-  {doc:'DIANA KARINA PADILLA HERRERA',      gpo:'010', acuse:'✓', notas:'Acuse enviado 24-jul (DIANA.PADILLAHRR@uanl.edu.mx)'},
-  {doc:'ANA VICTORIA CASILLAS ZAPATA',      gpo:'013', acuse:'✓', notas:'Acuse enviado 22-jun y 1-jul'},
-  {doc:'LUIS ENRIQUE OMANA TIJERINA',       gpo:'018', acuse:'✓', notas:'Acuse enviado 8-jul'},
-  {doc:'LUIS ENRIQUE OMANA TIJERINA',       gpo:'023', acuse:'✓', notas:'Acuse enviado 8-jul'},
-  // Pendiente real: LUIS ALFONSO DE LA FUENTE SUAREZ (LMC 014) — evidencias
-  // recibidas 19-jun sin acuse; borrador creado 29-jul.
-  // LUIS ALFONSO DE LA FUENTE SUAREZ (LMC 014) — RESUELTO 6-ago-2026:
-  // acuse verificado como ENVIADO el 22-jun-2026 (msg 19ef0102614921de).
-  {doc:'LUIS ALFONSO DE LA FUENTE SUAREZ',  gpo:'014', acuse:'✓', notas:'Acuse enviado 22-jun-2026 (verificado en bandeja SENT)'},
-  // Diana Laura Guerrero Reyes — LMC 017 (antes registrado como ANDREA GARCIA) — 27-jun
-  {doc:'DIANA LAURA GUERRERO REYES', gpo:'017', lC:'✓', pA:'✓', fecha:'2026-06-27', acuse:'✓', notas:'Evidencias LMC 017 recibidas 27-jun | Acuse enviado 1-jul (diana.guerrerorys@uanl.edu.mx)'},
-];
-  // Correos alternos detectados (el docente escribe desde una cuenta distinta a la registrada):
-  // Fermina Hinojosa → saeydi.farq@gmail.com · Dinorah Luna → arqadrianaluna.farq@gmail.com
-  // Sonia Rivera → soniariverac@hotmail.com · Yeymi Hernández → yeymipineda1@gmail.com
-  // Gallardo Hurtado → liz.15gaa@gmail.com · Héctor Gil → arq.hectorgil@yahoo.com.mx
-  // Diana Penilla → diana.hernandezpl@uanl.edu.mx · Gabriela Pachuca → gabrielapachuca@hotmail.com
-
-// ── Parches de asistencia a juntas — jIC/jCC del 19-ene y 22-may (PDFs Coord EJ26) ──
-const TEACH_UPDATES = [
-  {doc:'BERTIN MAURICIO ZAVALA RUGERIO',        jIS:'✓', jIC:'✓', jCS:'✓', jCC:'✓', m1:'✓'},
-  // Ambas juntas Coord
-  {doc:'GUILIANA LIZBETH GALLARDO HURTADO',     jIC:'✓', jCC:'✓'},
-  {doc:'YESSICA CAZARES ELIZONDO',              jIC:'✓', jCC:'✓'},
-  {doc:'MARIA MARLEN DE LEON CEPEDA',           jIC:'✓', jCC:'✓'},
-  {doc:'FABIOLA ROMERO HUERTA',                 jIC:'✓', jCC:'✓'},
-  {doc:'CARMEN LUCERO CORONADO GONZALEZ',       jIC:'✓', jCC:'✓'},
-  {doc:'NASHELLY RICANO ALARCON',               jIC:'✓', jCC:'✓'},
-  {doc:'ROBERTO EFRAIN PALOMO MARTINEZ',        jIC:'✓', jCC:'✓'},
-  {doc:'CESAR EDUARDO PINTOR ANGUIANO',         jIC:'✓', jCC:'✓'},
-  {doc:'JESUS EDUARDO DURAN ACOSTA',            jIC:'✓', jCC:'✓'},
-  {doc:'MARCELA LIZETH MENDOZA VAZQUEZ',        jIC:'✓', jCC:'✓'},
-  {doc:'ARNULFO ALVARADO RUIZ',                 jIC:'✓', jCC:'✓'},
-  // Solo jIC (19-ene)
-  {doc:'DORIS MORALES GONZALEZ',                jIC:'✓', jCC:'✓'},
-  {doc:'DANIEL ALBERTO TORRES GARZA',           jIC:'✓'},
-  {doc:'ALEJANDRA MINERVA BENAVIDES LOZANO',    jIC:'✓'},
-  {doc:'MARTHA ELENA GOMEZ GARZA',              jIC:'✓'},
-  {doc:'OFELIA EDITH CASTILLO ORTIZ',           jIC:'✓'},
-  {doc:'ANA MARIA HERNANDEZ PEREZ',             jIC:'✓'},
-  {doc:'DIANA KARINA PADILLA HERRERA',          jIC:'✓'},
-  {doc:'FERMINA HINOJOSA VAZQUEZ',              jIC:'✓'},
-  // Solo jCC (22-may)
-  {doc:'ALEJANDRA TELLO BECERRIL',              jCC:'✓'},
-  {doc:'MARIA ELISA VAZQUEZ COVARRUBIAS',       jCC:'✓'},
-  {doc:'GABRIELA ALEJANDRA ALBUERNE KELLY',     jCC:'✓'},
-  {doc:'DIANA JANETTE HERNANDEZ PENILLA',       jCC:'✓'},
-  {doc:'MIRIEL RIVERA SOTO',                    jCC:'✓'},
-  {doc:'LUCIO ESAU RODRIGUEZ DAVALOS',          jCC:'✓'},
-  {doc:'PALMIRA CECILIA VALENZUELA TAMEZ',      jCC:'✓'},
-];
 
 let TEACH = {
-  "ALEJANDRA MINERVA BENAVIDES LOZANO": {
-    "jIS": "",
-    "jIC": "✓",
-    "jCS": "✓",
-    "jCC": "",
-    "m1": ""
-  },
-  "ALEJANDRA TELLO BECERRIL": {
-    "jIS": "✓",
-    "jIC": "",
-    "jCS": "✓",
-    "jCC": "✓",
-    "m1": ""
-  },
-  "ALMA MIREYA MARTINEZ MARTINEZ": {
-    "jIS": "",
-    "jIC": "",
-    "jCS": "",
-    "jCC": "",
-    "m1": ""
-  },
-  "ANA MARIA HERNANDEZ PEREZ": {
-    "jIS": "✓",
-    "jIC": "✓",
-    "jCS": "✓",
-    "jCC": "",
-    "m1": ""
-  },
-  "ANA VICTORIA CASILLAS ZAPATA": {
-    "jIS": "✓",
-    "jIC": "",
-    "jCS": "",
-    "jCC": "",
-    "m1": ""
-  },
-  "DIANA LAURA GUERRERO REYES": {
-    "jIS": "",
-    "jIC": "",
-    "jCS": "",
-    "jCC": "",
-    "m1": ""
-  },
-  "ARNULFO ALVARADO RUIZ": {
-    "jIS": "✓",
-    "jIC": "✓",
-    "jCS": "✓",
-    "jCC": "✓",
-    "m1": "✓"
-  },
-  "BERTIN MAURICIO ZAVALA RUGERIO": {
-    "jIS": "✓",
-    "jIC": "✓",
-    "jCS": "✓",
-    "jCC": "✓",
-    "m1": "✓"
-  },
-  "BRENDA JANETTE CASTANON NAVA": {
-    "jIS": "✓",
-    "jIC": "",
-    "jCS": "",
-    "jCC": "",
-    "m1": ""
-  },
-  "CARMEN LUCERO CORONADO GONZALEZ": {
-    "jIS": "",
-    "jIC": "✓",
-    "jCS": "✓",
-    "jCC": "✓",
-    "m1": "✓"
-  },
-  "CESAR EDUARDO PINTOR ANGUIANO": {
-    "jIS": "✓",
-    "jIC": "✓",
-    "jCS": "",
-    "jCC": "✓",
-    "m1": ""
-  },
-  "DANIEL ALBERTO TORRES GARZA": {
-    "jIS": "✓",
-    "jIC": "✓",
-    "jCS": "✓",
-    "jCC": "",
-    "m1": "✓"
-  },
-  "DIANA JANETTE HERNANDEZ PENILLA": {
-    "jIS": "",
-    "jIC": "",
-    "jCS": "✓",
-    "jCC": "✓",
-    "m1": ""
-  },
-  "DIANA KARINA PADILLA HERRERA": {
-    "jIS": "",
-    "jIC": "✓",
-    "jCS": "",
-    "jCC": "",
-    "m1": ""
-  },
-  "DINORAH ADRIANA LUNA CASAS": {
-    "jIS": "✓",
-    "jIC": "",
-    "jCS": "",
-    "jCC": "",
-    "m1": ""
-  },
-  "DORIS MORALES GONZALEZ": {
-    "jIS": "✓",
-    "jIC": "✓",
-    "jCS": "✓",
-    "jCC": "✓",
-    "m1": "✓"
-  },
-  "EVA NOHEMI REA GARCIA": {
-    "jIS": "",
-    "jIC": "",
-    "jCS": "",
-    "jCC": "",
-    "m1": ""
-  },
-  "FABIOLA ROMERO HUERTA": {
-    "jIS": "✓",
-    "jIC": "✓",
-    "jCS": "✓",
-    "jCC": "✓",
-    "m1": ""
-  },
-  "FERMINA HINOJOSA VAZQUEZ": {
-    "jIS": "",
-    "jIC": "✓",
-    "jCS": "",
-    "jCC": "",
-    "m1": ""
-  },
-  "GABRIELA ALEJANDRA ALBUERNE KELLY": {
-    "jIS": "✓",
-    "jIC": "",
-    "jCS": "✓",
-    "jCC": "✓",
-    "m1": ""
-  },
-  "GABRIELA PACHUCA CASTRUITA": {
-    "jIS": "✓",
-    "jIC": "",
-    "jCS": "✓",
-    "jCC": "",
-    "m1": "✓"
-  },
-  "GUILIANA LIZBETH GALLARDO HURTADO": {
-    "jIS": "",
-    "jIC": "✓",
-    "jCS": "✓",
-    "jCC": "✓",
-    "m1": ""
-  },
-  "HECTOR MIGUEL GIL LEAL": {
-    "jIS": "",
-    "jIC": "",
-    "jCS": "",
-    "jCC": "",
-    "m1": "✓"
-  },
-  "JACOBO ANTONIO CLETO GARZA": {
-    "jIS": "",
-    "jIC": "",
-    "jCS": "",
-    "jCC": "",
-    "m1": ""
-  },
-  "JAVIER ISAAC GARZA ZUNIGA": {
-    "jIS": "✓",
-    "jIC": "",
-    "jCS": "",
-    "jCC": "",
-    "m1": ""
-  },
-  "JESUS ALBERTO CANAVATI ESPINOSA": {
-    "jIS": "✓",
-    "jIC": "",
-    "jCS": "",
-    "jCC": "",
-    "m1": ""
-  },
-  "JESUS ARTEMIO RUIZ ESPARZA": {
-    "jIS": "",
-    "jIC": "",
-    "jCS": "✓",
-    "jCC": "",
-    "m1": ""
-  },
-  "JESUS EDUARDO DURAN ACOSTA": {
-    "jIS": "✓",
-    "jIC": "✓",
-    "jCS": "✓",
-    "jCC": "✓",
-    "m1": ""
-  },
-  "LUCIO ESAU RODRIGUEZ DAVALOS": {
-    "jIS": "",
-    "jIC": "",
-    "jCS": "",
-    "jCC": "✓",
-    "m1": ""
-  },
-  "LUIS ALFONSO DE LA FUENTE SUAREZ": {
-    "jIS": "✓",
-    "jIC": "",
-    "jCS": "",
-    "jCC": "",
-    "m1": "✓"
-  },
-  "LUIS ENRIQUE OMANA TIJERINA": {
-    "jIS": "",
-    "jIC": "",
-    "jCS": "",
-    "jCC": "",
-    "m1": ""
-  },
-  "MARCELA LIZETH MENDOZA VAZQUEZ": {
-    "jIS": "✓",
-    "jIC": "✓",
-    "jCS": "✓",
-    "jCC": "✓",
-    "m1": ""
-  },
-  "MARIA ELISA VAZQUEZ COVARRUBIAS": {
-    "jIS": "✓",
-    "jIC": "",
-    "jCS": "✓",
-    "jCC": "✓",
-    "m1": ""
-  },
-  "MARIA MARLEN DE LEON CEPEDA": {
-    "jIS": "✓",
-    "jIC": "✓",
-    "jCS": "✓",
-    "jCC": "✓",
-    "m1": "✓"
-  },
-  "MARTHA ELENA GOMEZ GARZA": {
-    "jIS": "",
-    "jIC": "✓",
-    "jCS": "✓",
-    "jCC": "",
-    "m1": "✓"
-  },
-  "MIRIEL RIVERA SOTO": {
-    "jIS": "✓",
-    "jIC": "",
-    "jCS": "✓",
-    "jCC": "✓",
-    "m1": ""
-  },
-  "MONICA PATRICIA ORTIZ DIAZ": {
-    "jIS": "✓",
-    "jIC": "",
-    "jCS": "✓",
-    "jCC": "",
-    "m1": ""
-  },
-  "NASHELLY RICANO ALARCON": {
-    "jIS": "✓",
-    "jIC": "✓",
-    "jCS": "",
-    "jCC": "✓",
-    "m1": "✓"
-  },
-  "OFELIA EDITH CASTILLO ORTIZ": {
-    "jIS": "",
-    "jIC": "✓",
-    "jCS": "✓",
-    "jCC": "",
-    "m1": ""
-  },
-  "OSVALDO ANTONIO GARCIA MOLINA": {
-    "jIS": "",
-    "jIC": "",
-    "jCS": "",
-    "jCC": "",
-    "m1": ""
-  },
-  "PALMIRA CECILIA VALENZUELA TAMEZ": {
-    "jIS": "✓",
-    "jIC": "✓",
-    "jCS": "",
-    "jCC": "✓",
-    "m1": ""
-  },
-  "ROBERTO EFRAIN PALOMO MARTINEZ": {
-    "jIS": "",
-    "jIC": "✓",
-    "jCS": "✓",
-    "jCC": "✓",
-    "m1": ""
-  },
-  "SARAHI ALVARADO VILLARREAL": {
-    "jIS": "",
-    "jIC": "",
-    "jCS": "",
-    "jCC": "",
-    "m1": ""
-  },
-  "SONIA GUADALUPE RIVERA CASTILLO": {
-    "jIS": "✓",
-    "jIC": "",
-    "jCS": "",
-    "jCC": "",
-    "m1": ""
-  },
-  "YESSICA CAZARES ELIZONDO": {
-    "jIS": "✓",
-    "jIC": "✓",
-    "jCS": "✓",
-    "jCC": "✓",
-    "m1": ""
-  },
-  "YEYMI GUADALUPE HERNANDEZ RIVERA": {
-    "jIS": "",
-    "jIC": "",
-    "jCS": "",
-    "jCC": "",
-    "m1": ""
-  },
-  "JAVIER MEDELLIN PALACIOS": {
-    "jIS": "✓",
-    "jIC": "",
-    "jCS": "",
-    "jCC": "",
-    "m1": ""
-  }
+  'ALEJANDRA MINERVA BENAVIDES LOZANO': {jIS:'', jIC:'', jCS:'✓', jCC:''},
+  'ALEJANDRA TELLO BECERRIL': {jIS:'✓', jIC:'', jCS:'✓', jCC:''},
+  'ALMA MIREYA MARTINEZ MARTINEZ': {jIS:'', jIC:'', jCS:'', jCC:''},
+  'ANA MARIA HERNANDEZ PEREZ': {jIS:'✓', jIC:'', jCS:'✓', jCC:''},
+  'ANA VICTORIA CASILLAS ZAPATA': {jIS:'✓', jIC:'', jCS:'', jCC:''},
+  'ANDREA GARCIA': {jIS:'', jIC:'', jCS:'', jCC:''},
+  'ARNULFO ALVARADO RUIZ': {jIS:'✓', jIC:'', jCS:'✓', jCC:''},
+  'BERTIN MAURICIO ZAVALA RUGERIO': {jIS:'✓', jIC:'', jCS:'✓', jCC:''},
+  'BRENDA JANETTE CASTANON NAVA': {jIS:'✓', jIC:'', jCS:'', jCC:''},
+  'CARMEN LUCERO CORONADO GONZALEZ': {jIS:'', jIC:'', jCS:'✓', jCC:''},
+  'CESAR EDUARDO PINTOR ANGUIANO': {jIS:'✓', jIC:'', jCS:'', jCC:''},
+  'DANIEL ALBERTO TORRES GARZA': {jIS:'✓', jIC:'', jCS:'✓', jCC:''},
+  'DIANA JANETTE HERNANDEZ PENILLA': {jIS:'', jIC:'', jCS:'✓', jCC:''},
+  'DIANA KARINA PADILLA HERRERA': {jIS:'', jIC:'', jCS:'', jCC:''},
+  'DINORAH ADRIANA LUNA CASAS': {jIS:'✓', jIC:'', jCS:'', jCC:''},
+  'DORIS MORALES GONZALEZ': {jIS:'✓', jIC:'', jCS:'✓', jCC:''},
+  'EVA NOHEMI REA GARCIA': {jIS:'', jIC:'', jCS:'', jCC:''},
+  'FABIOLA ROMERO HUERTA': {jIS:'✓', jIC:'', jCS:'✓', jCC:''},
+  'FERMINA HINOJOSA VAZQUEZ': {jIS:'', jIC:'', jCS:'', jCC:''},
+  'GABRIELA ALEJANDRA ALBUERNE KELLY': {jIS:'✓', jIC:'', jCS:'✓', jCC:''},
+  'GABRIELA PACHUCA CASTRUITA': {jIS:'✓', jIC:'', jCS:'✓', jCC:''},
+  'GUILIANA LIZBETH GALLARDO HURTADO': {jIS:'', jIC:'', jCS:'✓', jCC:''},
+  'HECTOR MIGUEL GIL LEAL': {jIS:'', jIC:'', jCS:'', jCC:''},
+  'JACOBO ANTONIO CLETO GARZA': {jIS:'', jIC:'', jCS:'', jCC:''},
+  'JAVIER ISAAC GARZA ZUNIGA': {jIS:'✓', jIC:'', jCS:'', jCC:''},
+  'JESUS ALBERTO CANAVATI ESPINOSA': {jIS:'✓', jIC:'', jCS:'', jCC:''},
+  'JESUS ARTEMIO RUIZ ESPARZA': {jIS:'', jIC:'', jCS:'✓', jCC:''},
+  'JESUS EDUARDO DURAN ACOSTA': {jIS:'✓', jIC:'', jCS:'✓', jCC:''},
+  'LUCIO ESAU RODRIGUEZ DAVALOS': {jIS:'', jIC:'', jCS:'', jCC:''},
+  'LUIS ALFONSO DE LA FUENTE SUAREZ': {jIS:'✓', jIC:'', jCS:'', jCC:''},
+  'LUIS ENRIQUE OMANA TIJERINA': {jIS:'', jIC:'', jCS:'', jCC:''},
+  'MARCELA LIZETH MENDOZA VAZQUEZ': {jIS:'✓', jIC:'', jCS:'✓', jCC:''},
+  'MARIA ELISA VAZQUEZ COVARRUBIAS': {jIS:'✓', jIC:'', jCS:'✓', jCC:''},
+  'MARIA MARLEN DE LEON CEPEDA': {jIS:'✓', jIC:'', jCS:'✓', jCC:''},
+  'MARLA MEDINA': {jIS:'', jIC:'', jCS:'', jCC:''},
+  'MARTHA ELENA GOMEZ GARZA': {jIS:'', jIC:'', jCS:'✓', jCC:''},
+  'MIRIEL RIVERA SOTO': {jIS:'✓', jIC:'', jCS:'✓', jCC:''},
+  'MONICA PATRICIA ORTIZ DIAZ': {jIS:'✓', jIC:'', jCS:'✓', jCC:''},
+  'NASHELLY RICANO ALARCON': {jIS:'✓', jIC:'', jCS:'', jCC:''},
+  'OFELIA EDITH CASTILLO ORTIZ': {jIS:'', jIC:'', jCS:'✓', jCC:''},
+  'OSVALDO ANTONIO GARCIA MOLINA': {jIS:'', jIC:'', jCS:'', jCC:''},
+  'PALMIRA CECILIA VALENZUELA TAMEZ': {jIS:'✓', jIC:'', jCS:'', jCC:''},
+  'ROBERTO EFRAIN PALOMO MARTINEZ': {jIS:'', jIC:'', jCS:'✓', jCC:''},
+  'SARAHI ALVARADO VILLARREAL': {jIS:'', jIC:'', jCS:'', jCC:''},
+  'SONIA GUADALUPE RIVERA CASTILLO': {jIS:'✓', jIC:'', jCS:'', jCC:''},
+  'YESSICA CAZARES ELIZONDO': {jIS:'✓', jIC:'', jCS:'✓', jCC:''},
+  'YEYMI GUADALUPE HERNANDEZ RIVERA': {jIS:'', jIC:'', jCS:'', jCC:''},
+  'JAVIER MEDELLIN PALACIOS': {jIS:'✓', jIC:'', jCS:'', jCC:''},
 };
 
 let DATA = [
-  {
-    "id": 1,
-    "doc": "ALEJANDRA MINERVA BENAVIDES LOZANO",
-    "ua": "LMC",
-    "gpo": "001",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "arq.minerva.benavides@outlook.com",
-    "notas": ""
-  },
-  {
-    "id": 2,
-    "doc": "GABRIELA ALEJANDRA ALBUERNE KELLY",
-    "ua": "LMC",
-    "gpo": "002",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-29",
-    "acuse": "",
-    "correo": "alealbuerne@hotmail.com",
-    "notas": "Recibido por correo 29-jun"
-  },
-  {
-    "id": 3,
-    "doc": "DORIS MORALES GONZALEZ",
-    "ua": "LMC",
-    "gpo": "003",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-09",
-    "acuse": "✓",
-    "correo": "arqdoris.morales@gmail.com",
-    "notas": "Borrador acuse creado"
-  },
-  {
-    "id": 4,
-    "doc": "MARIA ELISA VAZQUEZ COVARRUBIAS",
-    "ua": "LMC",
-    "gpo": "004",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-07",
-    "acuse": "",
-    "correo": "elvazquec@hotmail.com",
-    "notas": "Borrador acuse creado"
-  },
-  {
-    "id": 5,
-    "doc": "GABRIELA PACHUCA CASTRUITA",
-    "ua": "LMC",
-    "gpo": "005",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-15",
-    "acuse": "",
-    "correo": "",
-    "notas": "PIA recibido 15-jul | Borrador acuse creado 20-jul"
-  },
-  {
-    "id": 6,
-    "doc": "FERMINA HINOJOSA VAZQUEZ",
-    "ua": "LMC",
-    "gpo": "006",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-02",
-    "acuse": "",
-    "correo": "",
-    "notas": "Recibido por correo 2-jul"
-  },
-  {
-    "id": 7,
-    "doc": "DIANA JANETTE HERNANDEZ PENILLA",
-    "ua": "LMC",
-    "gpo": "007",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-17",
-    "acuse": "",
-    "correo": "dianahpenilla@gmail.com",
-    "notas": "Recibido por correo 17-jul | Borrador acuse creado 20-jul"
-  },
-  {
-    "id": 8,
-    "doc": "FERMINA HINOJOSA VAZQUEZ",
-    "ua": "LMC",
-    "gpo": "008",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-02",
-    "acuse": "",
-    "correo": "",
-    "notas": "Recibido por correo 2-jul"
-  },
-  {
-    "id": 9,
-    "doc": "MARIA MARLEN DE LEON CEPEDA",
-    "ua": "LMC",
-    "gpo": "009",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-01",
-    "acuse": "",
-    "correo": "mmarlenlc@yahoo.com.mx",
-    "notas": "Borrador acuse creado"
-  },
-  {
-    "id": 10,
-    "doc": "JESUS ARTEMIO RUIZ ESPARZA",
-    "ua": "LMC",
-    "gpo": "010",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "ruizesparza89@gmail.com",
-    "notas": ""
-  },
-  {
-    "id": 11,
-    "doc": "DIANA JANETTE HERNANDEZ PENILLA",
-    "ua": "LMC",
-    "gpo": "011",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-17",
-    "acuse": "",
-    "correo": "dianahpenilla@gmail.com",
-    "notas": "Recibido por correo 17-jul | Borrador acuse creado 20-jul"
-  },
-  {
-    "id": 12,
-    "doc": "YESSICA CAZARES ELIZONDO",
-    "ua": "LMC",
-    "gpo": "012",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "arq.yecacel@hotmail.com",
-    "notas": ""
-  },
-  {
-    "id": 13,
-    "doc": "ALEJANDRA TELLO BECERRIL",
-    "ua": "LMC",
-    "gpo": "013",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "atello@uanl.edu.mx",
-    "notas": ""
-  },
-  {
-    "id": 14,
-    "doc": "LUIS ALFONSO DE LA FUENTE SUAREZ",
-    "ua": "LMC",
-    "gpo": "014",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-19",
-    "acuse": "",
-    "correo": "luisalfonsodelafuente@hotmail.com",
-    "notas": "Borrador acuse creado"
-  },
-  {
-    "id": 15,
-    "doc": "MIRIEL RIVERA SOTO",
-    "ua": "LMC",
-    "gpo": "015",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-27",
-    "acuse": "",
-    "correo": "miriel.rivera@icloud.com",
-    "notas": "Drive link 27-jun"
-  },
-  {
-    "id": 16,
-    "doc": "MIRIEL RIVERA SOTO",
-    "ua": "LMC",
-    "gpo": "016",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-27",
-    "acuse": "✓",
-    "correo": "miriel.rivera@icloud.com",
-    "notas": "Reasignado 21-ago: la fila figuraba como MARLA MEDINA (sin carga academica ni correo). Horarios EJ26 confirman titular MIRIEL RIVERA SOTO (cve 116777). Cubierto por Drive 'EVIDENCIAS ENE-JUN 2026' del 27-jun (acuse enviado 1-jul). PENDIENTE: no se verifico el contenido de la carpeta para este grupo"
-  },
-  {
-    "id": 17,
-    "doc": "DIANA LAURA GUERRERO REYES",
-    "ua": "LMC",
-    "gpo": "017",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "",
-    "notas": ""
-  },
-  {
-    "id": 18,
-    "doc": "CARMEN LUCERO CORONADO GONZALEZ",
-    "ua": "LMC",
-    "gpo": "018",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-03",
-    "acuse": "",
-    "correo": "carmen.coronadogn@uanl.edu.mx",
-    "notas": "Evidencias Laboratorios recibidas 3-jul"
-  },
-  {
-    "id": 19,
-    "doc": "MARIA MARLEN DE LEON CEPEDA",
-    "ua": "LMC",
-    "gpo": "022",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-01",
-    "acuse": "",
-    "correo": "mmarlenlc@yahoo.com.mx",
-    "notas": "Borrador acuse creado"
-  },
-  {
-    "id": 20,
-    "doc": "GABRIELA ALEJANDRA ALBUERNE KELLY",
-    "ua": "LMC",
-    "gpo": "023",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-29",
-    "acuse": "",
-    "correo": "alealbuerne@hotmail.com",
-    "notas": "Recibido por correo 29-jun"
-  },
-  {
-    "id": 21,
-    "doc": "DIANA JANETTE HERNANDEZ PENILLA",
-    "ua": "LMC",
-    "gpo": "024",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-17",
-    "acuse": "",
-    "correo": "dianahpenilla@gmail.com",
-    "notas": "Recibido por correo 17-jul | Borrador acuse creado 20-jul"
-  },
-  {
-    "id": 22,
-    "doc": "GABRIELA PACHUCA CASTRUITA",
-    "ua": "LMC",
-    "gpo": "028",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-15",
-    "acuse": "",
-    "correo": "",
-    "notas": "PIA recibido 15-jul | Borrador acuse creado 20-jul"
-  },
-  {
-    "id": 23,
-    "doc": "MARIA ELISA VAZQUEZ COVARRUBIAS",
-    "ua": "LMC",
-    "gpo": "029",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-07",
-    "acuse": "",
-    "correo": "elvazquec@hotmail.com",
-    "notas": "Borrador acuse creado"
-  },
-  {
-    "id": 24,
-    "doc": "DANIEL ALBERTO TORRES GARZA",
-    "ua": "LMC",
-    "gpo": "030",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-12",
-    "acuse": "✓",
-    "correo": "torresgarza.daniel@gmail.com",
-    "notas": "Acuse enviado 18-jun"
-  },
-  {
-    "id": 25,
-    "doc": "ALEJANDRA MINERVA BENAVIDES LOZANO",
-    "ua": "LMC",
-    "gpo": "031",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "arq.minerva.benavides@outlook.com",
-    "notas": ""
-  },
-  {
-    "id": 26,
-    "doc": "CARMEN LUCERO CORONADO GONZALEZ",
-    "ua": "LMC",
-    "gpo": "032",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-03",
-    "acuse": "",
-    "correo": "carmen.coronadogn@uanl.edu.mx",
-    "notas": "Evidencias Laboratorios recibidas 3-jul"
-  },
-  {
-    "id": 27,
-    "doc": "ROBERTO EFRAIN PALOMO MARTINEZ",
-    "ua": "LMC",
-    "gpo": "033",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-05-29",
-    "acuse": "",
-    "correo": "arkixote@gmail.com",
-    "notas": "Borrador acuse creado"
-  },
-  {
-    "id": 28,
-    "doc": "DORIS MORALES GONZALEZ",
-    "ua": "LMC",
-    "gpo": "034",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-09",
-    "acuse": "✓",
-    "correo": "arqdoris.morales@gmail.com",
-    "notas": "Borrador acuse creado"
-  },
-  {
-    "id": 29,
-    "doc": "GABRIELA PACHUCA CASTRUITA",
-    "ua": "LMC",
-    "gpo": "035",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-15",
-    "acuse": "",
-    "correo": "",
-    "notas": "PIA recibido 15-jul | Borrador acuse creado 20-jul"
-  },
-  {
-    "id": 30,
-    "doc": "MARIA ELISA VAZQUEZ COVARRUBIAS",
-    "ua": "LMC",
-    "gpo": "036",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-07",
-    "acuse": "",
-    "correo": "elvazquec@hotmail.com",
-    "notas": "Borrador acuse creado"
-  },
-  {
-    "id": 31,
-    "doc": "ALMA MIREYA MARTINEZ MARTINEZ",
-    "ua": "LMC",
-    "gpo": "037",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "arqmireyamtz@hotmail.com",
-    "notas": ""
-  },
-  {
-    "id": 32,
-    "doc": "BERTIN MAURICIO ZAVALA RUGERIO",
-    "ua": "LMC",
-    "gpo": "038",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-22",
-    "acuse": "",
-    "correo": "",
-    "notas": "Recibido por correo 22-jun"
-  },
-  {
-    "id": 33,
-    "doc": "JACOBO ANTONIO CLETO GARZA",
-    "ua": "LMC",
-    "gpo": "039",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "",
-    "notas": ""
-  },
-  {
-    "id": 34,
-    "doc": "DIANA JANETTE HERNANDEZ PENILLA",
-    "ua": "LMC",
-    "gpo": "060",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-17",
-    "acuse": "",
-    "correo": "dianahpenilla@gmail.com",
-    "notas": "Recibido por correo 17-jul | Borrador acuse creado 20-jul"
-  },
-  {
-    "id": 35,
-    "doc": "OSVALDO ANTONIO GARCIA MOLINA",
-    "ua": "LMC",
-    "gpo": "061",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-04",
-    "acuse": "",
-    "correo": "gamega77@hotmail.com",
-    "notas": "Evaluaciones, listas asistencia y PIA recibidos 4-jul"
-  },
-  {
-    "id": 36,
-    "doc": "YEYMI GUADALUPE HERNANDEZ RIVERA",
-    "ua": "LMC",
-    "gpo": "063",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-25",
-    "acuse": "",
-    "correo": "",
-    "notas": "Recibido por correo 25-jun"
-  },
-  {
-    "id": 37,
-    "doc": "ALMA MIREYA MARTINEZ MARTINEZ",
-    "ua": "LMC",
-    "gpo": "064",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "arqmireyamtz@hotmail.com",
-    "notas": ""
-  },
-  {
-    "id": 38,
-    "doc": "JESUS EDUARDO DURAN ACOSTA",
-    "ua": "LMC",
-    "gpo": "065",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "jeday59@gmail.com",
-    "notas": ""
-  },
-  {
-    "id": 39,
-    "doc": "OSVALDO ANTONIO GARCIA MOLINA",
-    "ua": "LMC",
-    "gpo": "066",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-04",
-    "acuse": "",
-    "correo": "gamega77@hotmail.com",
-    "notas": "Evaluaciones, listas asistencia y PIA recibidos 4-jul"
-  },
-  {
-    "id": 40,
-    "doc": "DINORAH ADRIANA LUNA CASAS",
-    "ua": "LMC",
-    "gpo": "067",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-24",
-    "acuse": "",
-    "correo": "",
-    "notas": "Recibido por correo 24-jul (arqadrianaluna.farq@gmail.com) | Borrador acuse creado 24-jul"
-  },
-  {
-    "id": 41,
-    "doc": "ROBERTO EFRAIN PALOMO MARTINEZ",
-    "ua": "LMC",
-    "gpo": "068",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-05-29",
-    "acuse": "",
-    "correo": "arkixote@gmail.com",
-    "notas": "Borrador acuse creado"
-  },
-  {
-    "id": 42,
-    "doc": "CARMEN LUCERO CORONADO GONZALEZ",
-    "ua": "LMC",
-    "gpo": "069",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-03",
-    "acuse": "",
-    "correo": "carmen.coronadogn@uanl.edu.mx",
-    "notas": "Evidencias Laboratorios recibidas 3-jul"
-  },
-  {
-    "id": 43,
-    "doc": "JAVIER ISAAC GARZA ZUNIGA",
-    "ua": "LDA",
-    "gpo": "001",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-03",
-    "acuse": "",
-    "correo": "argjavier.garza@gmail.com",
-    "notas": "Minuta + PIA LDA recibidos 3-jun | Reenvío 20-jul | Borrador acuse creado 21-jul"
-  },
-  {
-    "id": 44,
-    "doc": "LUCIO ESAU RODRIGUEZ DAVALOS",
-    "ua": "LDA",
-    "gpo": "002",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-22",
-    "acuse": "",
-    "correo": "",
-    "notas": "Recibido por correo 22-jul | Borrador acuse creado 22-jul"
-  },
-  {
-    "id": 45,
-    "doc": "YESSICA CAZARES ELIZONDO",
-    "ua": "LDA",
-    "gpo": "003",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "arq.yecacel@hotmail.com",
-    "notas": ""
-  },
-  {
-    "id": 46,
-    "doc": "MARCELA LIZETH MENDOZA VAZQUEZ",
-    "ua": "LDA",
-    "gpo": "004",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "arq.marcelamendoza@gmail.com",
-    "notas": ""
-  },
-  {
-    "id": 47,
-    "doc": "MONICA PATRICIA ORTIZ DIAZ",
-    "ua": "LDA",
-    "gpo": "005",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-11",
-    "acuse": "",
-    "correo": "moni.ortiz67@gmail.com",
-    "notas": "Borrador acuse creado"
-  },
-  {
-    "id": 48,
-    "doc": "MARTHA ELENA GOMEZ GARZA",
-    "ua": "LDA",
-    "gpo": "006",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "",
-    "notas": ""
-  },
-  {
-    "id": 49,
-    "doc": "DINORAH ADRIANA LUNA CASAS",
-    "ua": "LDA",
-    "gpo": "007",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-24",
-    "acuse": "",
-    "correo": "",
-    "notas": "Recibido por correo 24-jul (arqadrianaluna.farq@gmail.com) | Borrador acuse creado 24-jul"
-  },
-  {
-    "id": 50,
-    "doc": "ROBERTO EFRAIN PALOMO MARTINEZ",
-    "ua": "LDA",
-    "gpo": "008",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-05-29",
-    "acuse": "",
-    "correo": "arkixote@gmail.com",
-    "notas": "Borrador acuse creado"
-  },
-  {
-    "id": 51,
-    "doc": "SONIA GUADALUPE RIVERA CASTILLO",
-    "ua": "LDA",
-    "gpo": "009",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-28",
-    "acuse": "",
-    "correo": "",
-    "notas": "Recibido por correo 28-jun"
-  },
-  {
-    "id": 52,
-    "doc": "MIRIEL RIVERA SOTO",
-    "ua": "LDA",
-    "gpo": "010",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-27",
-    "acuse": "",
-    "correo": "miriel.rivera@icloud.com",
-    "notas": "Drive link 27-jun"
-  },
-  {
-    "id": 53,
-    "doc": "HECTOR MIGUEL GIL LEAL",
-    "ua": "LDA",
-    "gpo": "011",
-    "lC": "✓",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "",
-    "notas": ""
-  },
-  {
-    "id": 54,
-    "doc": "ARNULFO ALVARADO RUIZ",
-    "ua": "LDA",
-    "gpo": "012",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-22",
-    "acuse": "",
-    "correo": "arnulfo.alvarado@gmail.com",
-    "notas": "Recibido por correo 22-jul | Borrador acuse creado 22-jul"
-  },
-  {
-    "id": 55,
-    "doc": "DANIEL ALBERTO TORRES GARZA",
-    "ua": "LDA",
-    "gpo": "013",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-12",
-    "acuse": "✓",
-    "correo": "torresgarza.daniel@gmail.com",
-    "notas": "Acuse enviado 18-jun"
-  },
-  {
-    "id": 56,
-    "doc": "HECTOR MIGUEL GIL LEAL",
-    "ua": "LDA",
-    "gpo": "014",
-    "lC": "✓",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "",
-    "notas": ""
-  },
-  {
-    "id": 57,
-    "doc": "MARIA MARLEN DE LEON CEPEDA",
-    "ua": "LDA",
-    "gpo": "015",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-01",
-    "acuse": "",
-    "correo": "mmarlenlc@yahoo.com.mx",
-    "notas": "Borrador acuse creado"
-  },
-  {
-    "id": 58,
-    "doc": "JESUS EDUARDO DURAN ACOSTA",
-    "ua": "LDA",
-    "gpo": "016",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "jeday59@gmail.com",
-    "notas": ""
-  },
-  {
-    "id": 59,
-    "doc": "HECTOR MIGUEL GIL LEAL",
-    "ua": "LDA",
-    "gpo": "017",
-    "lC": "✓",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "",
-    "notas": ""
-  },
-  {
-    "id": 60,
-    "doc": "ALEJANDRA TELLO BECERRIL",
-    "ua": "LDA",
-    "gpo": "018",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "atello@uanl.edu.mx",
-    "notas": ""
-  },
-  {
-    "id": 61,
-    "doc": "JESUS EDUARDO DURAN ACOSTA",
-    "ua": "LDA",
-    "gpo": "019",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "jeday59@gmail.com",
-    "notas": ""
-  },
-  {
-    "id": 62,
-    "doc": "SARAHI ALVARADO VILLARREAL",
-    "ua": "LDA",
-    "gpo": "020",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-09",
-    "acuse": "",
-    "correo": "sarahialvaradov@gmail.com",
-    "notas": "Borrador acuse creado"
-  },
-  {
-    "id": 63,
-    "doc": "ALEJANDRA TELLO BECERRIL",
-    "ua": "LDA",
-    "gpo": "021",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "atello@uanl.edu.mx",
-    "notas": ""
-  },
-  {
-    "id": 64,
-    "doc": "SONIA GUADALUPE RIVERA CASTILLO",
-    "ua": "LDA",
-    "gpo": "025",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-28",
-    "acuse": "",
-    "correo": "",
-    "notas": "Recibido por correo 28-jun"
-  },
-  {
-    "id": 65,
-    "doc": "ANA MARIA HERNANDEZ PEREZ",
-    "ua": "LDA",
-    "gpo": "026",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-02",
-    "acuse": "",
-    "correo": "arq.ana.hp@gmail.com",
-    "notas": "Portafolio LDA recibido 2-jul"
-  },
-  {
-    "id": 66,
-    "doc": "JESUS ALBERTO CANAVATI ESPINOSA",
-    "ua": "LDA",
-    "gpo": "027",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "alberto.canavati@gmail.com",
-    "notas": ""
-  },
-  {
-    "id": 67,
-    "doc": "BRENDA JANETTE CASTANON NAVA",
-    "ua": "LDA",
-    "gpo": "028",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "",
-    "notas": ""
-  },
-  {
-    "id": 68,
-    "doc": "MONICA PATRICIA ORTIZ DIAZ",
-    "ua": "LDA",
-    "gpo": "029",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-11",
-    "acuse": "",
-    "correo": "moni.ortiz67@gmail.com",
-    "notas": "Borrador acuse creado"
-  },
-  {
-    "id": 69,
-    "doc": "OFELIA EDITH CASTILLO ORTIZ",
-    "ua": "LDA",
-    "gpo": "030",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "edicostarg@gmail.com",
-    "notas": ""
-  },
-  {
-    "id": 70,
-    "doc": "DANIEL ALBERTO TORRES GARZA",
-    "ua": "LDA",
-    "gpo": "031",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-12",
-    "acuse": "✓",
-    "correo": "torresgarza.daniel@gmail.com",
-    "notas": "Acuse enviado 18-jun"
-  },
-  {
-    "id": 71,
-    "doc": "ANA MARIA HERNANDEZ PEREZ",
-    "ua": "LDA",
-    "gpo": "032",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-04",
-    "acuse": "",
-    "correo": "arq.ana.hp@gmail.com",
-    "notas": "DATOS + F1-F3 + Libreto recibidos 4-jul"
-  },
-  {
-    "id": 72,
-    "doc": "NASHELLY RICANO ALARCON",
-    "ua": "LDA",
-    "gpo": "033",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "nashellyricanoalarcon@gmail.com",
-    "notas": ""
-  },
-  {
-    "id": 73,
-    "doc": "SARAHI ALVARADO VILLARREAL",
-    "ua": "LDA",
-    "gpo": "034",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-09",
-    "acuse": "",
-    "correo": "sarahialvaradov@gmail.com",
-    "notas": "Borrador acuse creado"
-  },
-  {
-    "id": 74,
-    "doc": "ROBERTO EFRAIN PALOMO MARTINEZ",
-    "ua": "LDA",
-    "gpo": "035",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-05-29",
-    "acuse": "",
-    "correo": "arkixote@gmail.com",
-    "notas": "Borrador acuse creado"
-  },
-  {
-    "id": 75,
-    "doc": "JESUS ARTEMIO RUIZ ESPARZA",
-    "ua": "LDA",
-    "gpo": "036",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "ruizesparza89@gmail.com",
-    "notas": ""
-  },
-  {
-    "id": 76,
-    "doc": "CESAR EDUARDO PINTOR ANGUIANO",
-    "ua": "IDA",
-    "gpo": "001",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "",
-    "notas": ""
-  },
-  {
-    "id": 77,
-    "doc": "GUILIANA LIZBETH GALLARDO HURTADO",
-    "ua": "IDA",
-    "gpo": "002",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-24",
-    "acuse": "",
-    "correo": "lizbeth.75go@outlook.com",
-    "notas": "Recibido por correo 24-jul (liz.15gaa@gmail.com) | Borrador acuse creado 28-jul"
-  },
-  {
-    "id": 78,
-    "doc": "CARMEN LUCERO CORONADO GONZALEZ",
-    "ua": "IDA",
-    "gpo": "003",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-03",
-    "acuse": "",
-    "correo": "carmen.coronadogn@uanl.edu.mx",
-    "notas": "Evidencias Laboratorios recibidas 3-jul"
-  },
-  {
-    "id": 79,
-    "doc": "DANIEL ALBERTO TORRES GARZA",
-    "ua": "IDA",
-    "gpo": "004",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-12",
-    "acuse": "✓",
-    "correo": "torresgarza.daniel@gmail.com",
-    "notas": "Acuse enviado 18-jun"
-  },
-  {
-    "id": 80,
-    "doc": "CESAR EDUARDO PINTOR ANGUIANO",
-    "ua": "IDA",
-    "gpo": "005",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "",
-    "notas": ""
-  },
-  {
-    "id": 81,
-    "doc": "PALMIRA CECILIA VALENZUELA TAMEZ",
-    "ua": "IDA",
-    "gpo": "006",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-25",
-    "acuse": "",
-    "correo": "",
-    "notas": "Recibido por correo 25-jun"
-  },
-  {
-    "id": 82,
-    "doc": "ARNULFO ALVARADO RUIZ",
-    "ua": "IDA",
-    "gpo": "007",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-22",
-    "acuse": "",
-    "correo": "arnulfo.alvarado@gmail.com",
-    "notas": "Recibido por correo 22-jul | Borrador acuse creado 22-jul"
-  },
-  {
-    "id": 83,
-    "doc": "DANIEL ALBERTO TORRES GARZA",
-    "ua": "IDA",
-    "gpo": "008",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-12",
-    "acuse": "✓",
-    "correo": "torresgarza.daniel@gmail.com",
-    "notas": "Acuse enviado 18-jun"
-  },
-  {
-    "id": 84,
-    "doc": "FABIOLA ROMERO HUERTA",
-    "ua": "IDA",
-    "gpo": "009",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "fabiolar56@gmail.com",
-    "notas": ""
-  },
-  {
-    "id": 85,
-    "doc": "DIANA KARINA PADILLA HERRERA",
-    "ua": "IDA",
-    "gpo": "010",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-19",
-    "acuse": "",
-    "correo": "",
-    "notas": "LC + PIA IDA recibidos 19-jun | Reenvío 20-jul | Borrador acuse creado 21-jul"
-  },
-  {
-    "id": 86,
-    "doc": "MARCELA LIZETH MENDOZA VAZQUEZ",
-    "ua": "IDA",
-    "gpo": "011",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "arq.marcelamendoza@gmail.com",
-    "notas": ""
-  },
-  {
-    "id": 87,
-    "doc": "MARIA MARLEN DE LEON CEPEDA",
-    "ua": "IDA",
-    "gpo": "012",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-01",
-    "acuse": "",
-    "correo": "mmarlenlc@yahoo.com.mx",
-    "notas": "Borrador acuse creado"
-  },
-  {
-    "id": 88,
-    "doc": "ANA VICTORIA CASILLAS ZAPATA",
-    "ua": "IDA",
-    "gpo": "013",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-16",
-    "acuse": "",
-    "correo": "acasillasz@hotmail.com",
-    "notas": "Proyecto alumno pendiente | PIA recibido 23-jun"
-  },
-  {
-    "id": 89,
-    "doc": "BRENDA JANETTE CASTANON NAVA",
-    "ua": "IDA",
-    "gpo": "014",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "",
-    "notas": ""
-  },
-  {
-    "id": 90,
-    "doc": "GUILIANA LIZBETH GALLARDO HURTADO",
-    "ua": "IDA",
-    "gpo": "015",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-24",
-    "acuse": "",
-    "correo": "lizbeth.75go@outlook.com",
-    "notas": "Recibido por correo 24-jul (liz.15gaa@gmail.com) | Borrador acuse creado 28-jul"
-  },
-  {
-    "id": 91,
-    "doc": "FABIOLA ROMERO HUERTA",
-    "ua": "IDA",
-    "gpo": "016",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "fabiolar56@gmail.com",
-    "notas": ""
-  },
-  {
-    "id": 92,
-    "doc": "MARCELA LIZETH MENDOZA VAZQUEZ",
-    "ua": "IDA",
-    "gpo": "017",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "arq.marcelamendoza@gmail.com",
-    "notas": ""
-  },
-  {
-    "id": 93,
-    "doc": "LUIS ENRIQUE OMANA TIJERINA",
-    "ua": "IDA",
-    "gpo": "018",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-07",
-    "acuse": "",
-    "correo": "luis.omana9@gmail.com",
-    "notas": "Evaluación + PIA INDARQ recibidos 7-jul"
-  },
-  {
-    "id": 94,
-    "doc": "ANA MARIA HERNANDEZ PEREZ",
-    "ua": "IDA",
-    "gpo": "019",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-04",
-    "acuse": "",
-    "correo": "arq.ana.hp@gmail.com",
-    "notas": "Libreto IDA recibido 4-jul (LC pendiente por fallo de disco)"
-  },
-  {
-    "id": 95,
-    "doc": "EVA NOHEMI REA GARCIA",
-    "ua": "IDA",
-    "gpo": "020",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "",
-    "notas": ""
-  },
-  {
-    "id": 96,
-    "doc": "JESUS EDUARDO DURAN ACOSTA",
-    "ua": "IDA",
-    "gpo": "021",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "jeday59@gmail.com",
-    "notas": ""
-  },
-  {
-    "id": 97,
-    "doc": "YEYMI GUADALUPE HERNANDEZ RIVERA",
-    "ua": "IDA",
-    "gpo": "022",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-25",
-    "acuse": "",
-    "correo": "",
-    "notas": "Recibido por correo 25-jun"
-  },
-  {
-    "id": 98,
-    "doc": "LUIS ENRIQUE OMANA TIJERINA",
-    "ua": "IDA",
-    "gpo": "023",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-07-07",
-    "acuse": "",
-    "correo": "luis.omana9@gmail.com",
-    "notas": "Evaluación + PIA INDARQ recibidos 7-jul"
-  },
-  {
-    "id": 99,
-    "doc": "JESUS ARTEMIO RUIZ ESPARZA",
-    "ua": "IDA",
-    "gpo": "024",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "ruizesparza89@gmail.com",
-    "notas": ""
-  },
-  {
-    "id": 100,
-    "doc": "YEYMI GUADALUPE HERNANDEZ RIVERA",
-    "ua": "IDA",
-    "gpo": "028",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-25",
-    "acuse": "",
-    "correo": "",
-    "notas": "Recibido por correo 25-jun"
-  },
-  {
-    "id": 101,
-    "doc": "ALMA MIREYA MARTINEZ MARTINEZ",
-    "ua": "IDA",
-    "gpo": "029",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "arqmireyamtz@hotmail.com",
-    "notas": ""
-  },
-  {
-    "id": 102,
-    "doc": "JESUS ARTEMIO RUIZ ESPARZA",
-    "ua": "IDA",
-    "gpo": "030",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "ruizesparza89@gmail.com",
-    "notas": ""
-  },
-  {
-    "id": 103,
-    "doc": "JAVIER MEDELLIN PALACIOS",
-    "ua": "LDA",
-    "gpo": "AJ-01",
-    "lC": "",
-    "pA": "",
-    "fecha": "",
-    "acuse": "",
-    "correo": "javierz30@gmail.com",
-    "notas": "Campus Juárez"
-  },
-  {
-    "id": 104,
-    "doc": "YEYMI GUADALUPE HERNANDEZ RIVERA",
-    "ua": "LDA",
-    "gpo": "AJ-02",
-    "lC": "✓",
-    "pA": "✓",
-    "fecha": "2026-06-25",
-    "acuse": "",
-    "correo": "",
-    "notas": "Campus Juárez | Recibido por correo 25-jun"
-  }
+  {id:1, doc:'ALEJANDRA MINERVA BENAVIDES LOZANO', ua:'LMC', gpo:'001', lC:'', pA:'', fecha:'', acuse:'', correo:'arq.minerva.benavides@outlook.com', notas:''},
+  {id:2, doc:'GABRIELA ALEJANDRA ALBUERNE KELLY', ua:'LMC', gpo:'002', lC:'', pA:'', fecha:'', acuse:'', correo:'alealbuerne@hotmail.com', notas:''},
+  {id:3, doc:'DORIS MORALES GONZALEZ', ua:'LMC', gpo:'003', lC:'✓', pA:'✓', fecha:'2026-06-09', acuse:'', correo:'arqdoris.morales@gmail.com', notas:'Borrador acuse creado'},
+  {id:4, doc:'MARIA ELISA VAZQUEZ COVARRUBIAS', ua:'LMC', gpo:'004', lC:'✓', pA:'✓', fecha:'2026-06-07', acuse:'', correo:'elvazquec@hotmail.com', notas:'Borrador acuse creado'},
+  {id:5, doc:'GABRIELA PACHUCA CASTRUITA', ua:'LMC', gpo:'005', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:6, doc:'FERMINA HINOJOSA VAZQUEZ', ua:'LMC', gpo:'006', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:7, doc:'DIANA JANETTE HERNANDEZ PENILLA', ua:'LMC', gpo:'007', lC:'', pA:'', fecha:'', acuse:'', correo:'dianahpenilla@gmail.com', notas:''},
+  {id:8, doc:'FERMINA HINOJOSA VAZQUEZ', ua:'LMC', gpo:'008', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:9, doc:'MARIA MARLEN DE LEON CEPEDA', ua:'LMC', gpo:'009', lC:'✓', pA:'✓', fecha:'2026-06-01', acuse:'', correo:'mmarlenlc@yahoo.com.mx', notas:'Borrador acuse creado'},
+  {id:10, doc:'JESUS ARTEMIO RUIZ ESPARZA', ua:'LMC', gpo:'010', lC:'', pA:'', fecha:'', acuse:'', correo:'ruizesparza89@gmail.com', notas:''},
+  {id:11, doc:'DIANA JANETTE HERNANDEZ PENILLA', ua:'LMC', gpo:'011', lC:'', pA:'', fecha:'', acuse:'', correo:'dianahpenilla@gmail.com', notas:''},
+  {id:12, doc:'YESSICA CAZARES ELIZONDO', ua:'LMC', gpo:'012', lC:'', pA:'', fecha:'', acuse:'', correo:'arq.yecacel@hotmail.com', notas:''},
+  {id:13, doc:'ALEJANDRA TELLO BECERRIL', ua:'LMC', gpo:'013', lC:'', pA:'', fecha:'', acuse:'', correo:'atello@uanl.edu.mx', notas:''},
+  {id:14, doc:'LUIS ALFONSO DE LA FUENTE SUAREZ', ua:'LMC', gpo:'014', lC:'✓', pA:'✓', fecha:'2026-06-19', acuse:'', correo:'luisalfonsodelafuente@hotmail.com', notas:'Borrador acuse creado'},
+  {id:15, doc:'MIRIEL RIVERA SOTO', ua:'LMC', gpo:'015', lC:'', pA:'', fecha:'', acuse:'', correo:'miriel.rivera@icloud.com', notas:''},
+  {id:16, doc:'MARLA MEDINA', ua:'LMC', gpo:'016', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:17, doc:'ANDREA GARCIA', ua:'LMC', gpo:'017', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:18, doc:'CARMEN LUCERO CORONADO GONZALEZ', ua:'LMC', gpo:'018', lC:'', pA:'', fecha:'', acuse:'', correo:'carmen.coronadogn@uanl.edu.mx', notas:''},
+  {id:19, doc:'MARIA MARLEN DE LEON CEPEDA', ua:'LMC', gpo:'022', lC:'✓', pA:'✓', fecha:'2026-06-01', acuse:'', correo:'mmarlenlc@yahoo.com.mx', notas:'Borrador acuse creado'},
+  {id:20, doc:'GABRIELA ALEJANDRA ALBUERNE KELLY', ua:'LMC', gpo:'023', lC:'', pA:'', fecha:'', acuse:'', correo:'alealbuerne@hotmail.com', notas:''},
+  {id:21, doc:'DIANA JANETTE HERNANDEZ PENILLA', ua:'LMC', gpo:'024', lC:'', pA:'', fecha:'', acuse:'', correo:'dianahpenilla@gmail.com', notas:''},
+  {id:22, doc:'GABRIELA PACHUCA CASTRUITA', ua:'LMC', gpo:'028', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:23, doc:'MARIA ELISA VAZQUEZ COVARRUBIAS', ua:'LMC', gpo:'029', lC:'✓', pA:'✓', fecha:'2026-06-07', acuse:'', correo:'elvazquec@hotmail.com', notas:'Borrador acuse creado'},
+  {id:24, doc:'DANIEL ALBERTO TORRES GARZA', ua:'LMC', gpo:'030', lC:'✓', pA:'✓', fecha:'2026-06-12', acuse:'✓', correo:'torresgarza.daniel@gmail.com', notas:'Acuse enviado 18-jun'},
+  {id:25, doc:'ALEJANDRA MINERVA BENAVIDES LOZANO', ua:'LMC', gpo:'031', lC:'', pA:'', fecha:'', acuse:'', correo:'arq.minerva.benavides@outlook.com', notas:''},
+  {id:26, doc:'CARMEN LUCERO CORONADO GONZALEZ', ua:'LMC', gpo:'032', lC:'', pA:'', fecha:'', acuse:'', correo:'carmen.coronadogn@uanl.edu.mx', notas:''},
+  {id:27, doc:'ROBERTO EFRAIN PALOMO MARTINEZ', ua:'LMC', gpo:'033', lC:'✓', pA:'✓', fecha:'2026-05-29', acuse:'', correo:'arkixote@gmail.com', notas:'Borrador acuse creado'},
+  {id:28, doc:'DORIS MORALES GONZALEZ', ua:'LMC', gpo:'034', lC:'✓', pA:'✓', fecha:'2026-06-09', acuse:'', correo:'arqdoris.morales@gmail.com', notas:'Borrador acuse creado'},
+  {id:29, doc:'GABRIELA PACHUCA CASTRUITA', ua:'LMC', gpo:'035', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:30, doc:'MARIA ELISA VAZQUEZ COVARRUBIAS', ua:'LMC', gpo:'036', lC:'✓', pA:'✓', fecha:'2026-06-07', acuse:'', correo:'elvazquec@hotmail.com', notas:'Borrador acuse creado'},
+  {id:31, doc:'ALMA MIREYA MARTINEZ MARTINEZ', ua:'LMC', gpo:'037', lC:'', pA:'', fecha:'', acuse:'', correo:'arqmireyamtz@hotmail.com', notas:''},
+  {id:32, doc:'BERTIN MAURICIO ZAVALA RUGERIO', ua:'LMC', gpo:'038', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:33, doc:'JACOBO ANTONIO CLETO GARZA', ua:'LMC', gpo:'039', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:34, doc:'DIANA JANETTE HERNANDEZ PENILLA', ua:'LMC', gpo:'060', lC:'', pA:'', fecha:'', acuse:'', correo:'dianahpenilla@gmail.com', notas:''},
+  {id:35, doc:'OSVALDO ANTONIO GARCIA MOLINA', ua:'LMC', gpo:'061', lC:'', pA:'', fecha:'', acuse:'', correo:'gamega77@hotmail.com', notas:''},
+  {id:36, doc:'YEYMI GUADALUPE HERNANDEZ RIVERA', ua:'LMC', gpo:'063', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:37, doc:'ALMA MIREYA MARTINEZ MARTINEZ', ua:'LMC', gpo:'064', lC:'', pA:'', fecha:'', acuse:'', correo:'arqmireyamtz@hotmail.com', notas:''},
+  {id:38, doc:'JESUS EDUARDO DURAN ACOSTA', ua:'LMC', gpo:'065', lC:'', pA:'', fecha:'', acuse:'', correo:'jeday59@gmail.com', notas:''},
+  {id:39, doc:'OSVALDO ANTONIO GARCIA MOLINA', ua:'LMC', gpo:'066', lC:'', pA:'', fecha:'', acuse:'', correo:'gamega77@hotmail.com', notas:''},
+  {id:40, doc:'DINORAH ADRIANA LUNA CASAS', ua:'LMC', gpo:'067', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:41, doc:'ROBERTO EFRAIN PALOMO MARTINEZ', ua:'LMC', gpo:'068', lC:'✓', pA:'✓', fecha:'2026-05-29', acuse:'', correo:'arkixote@gmail.com', notas:'Borrador acuse creado'},
+  {id:42, doc:'CARMEN LUCERO CORONADO GONZALEZ', ua:'LMC', gpo:'069', lC:'', pA:'', fecha:'', acuse:'', correo:'carmen.coronadogn@uanl.edu.mx', notas:''},
+  {id:43, doc:'JAVIER ISAAC GARZA ZUNIGA', ua:'LDA', gpo:'001', lC:'', pA:'', fecha:'', acuse:'', correo:'argjavier.garza@gmail.com', notas:''},
+  {id:44, doc:'LUCIO ESAU RODRIGUEZ DAVALOS', ua:'LDA', gpo:'002', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:45, doc:'YESSICA CAZARES ELIZONDO', ua:'LDA', gpo:'003', lC:'', pA:'', fecha:'', acuse:'', correo:'arq.yecacel@hotmail.com', notas:''},
+  {id:46, doc:'MARCELA LIZETH MENDOZA VAZQUEZ', ua:'LDA', gpo:'004', lC:'', pA:'', fecha:'', acuse:'', correo:'arq.marcelamendoza@gmail.com', notas:''},
+  {id:47, doc:'MONICA PATRICIA ORTIZ DIAZ', ua:'LDA', gpo:'005', lC:'✓', pA:'✓', fecha:'2026-06-11', acuse:'', correo:'moni.ortiz67@gmail.com', notas:'Borrador acuse creado'},
+  {id:48, doc:'MARTHA ELENA GOMEZ GARZA', ua:'LDA', gpo:'006', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:49, doc:'DINORAH ADRIANA LUNA CASAS', ua:'LDA', gpo:'007', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:50, doc:'ROBERTO EFRAIN PALOMO MARTINEZ', ua:'LDA', gpo:'008', lC:'✓', pA:'✓', fecha:'2026-05-29', acuse:'', correo:'arkixote@gmail.com', notas:'Borrador acuse creado'},
+  {id:51, doc:'SONIA GUADALUPE RIVERA CASTILLO', ua:'LDA', gpo:'009', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:52, doc:'MIRIEL RIVERA SOTO', ua:'LDA', gpo:'010', lC:'', pA:'', fecha:'', acuse:'', correo:'miriel.rivera@icloud.com', notas:''},
+  {id:53, doc:'HECTOR MIGUEL GIL LEAL', ua:'LDA', gpo:'011', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:54, doc:'ARNULFO ALVARADO RUIZ', ua:'LDA', gpo:'012', lC:'', pA:'', fecha:'', acuse:'', correo:'arnulfo.alvarado@gmail.com', notas:''},
+  {id:55, doc:'DANIEL ALBERTO TORRES GARZA', ua:'LDA', gpo:'013', lC:'✓', pA:'✓', fecha:'2026-06-12', acuse:'✓', correo:'torresgarza.daniel@gmail.com', notas:'Acuse enviado 18-jun'},
+  {id:56, doc:'HECTOR MIGUEL GIL LEAL', ua:'LDA', gpo:'014', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:57, doc:'MARIA MARLEN DE LEON CEPEDA', ua:'LDA', gpo:'015', lC:'✓', pA:'✓', fecha:'2026-06-01', acuse:'', correo:'mmarlenlc@yahoo.com.mx', notas:'Borrador acuse creado'},
+  {id:58, doc:'JESUS EDUARDO DURAN ACOSTA', ua:'LDA', gpo:'016', lC:'', pA:'', fecha:'', acuse:'', correo:'jeday59@gmail.com', notas:''},
+  {id:59, doc:'HECTOR MIGUEL GIL LEAL', ua:'LDA', gpo:'017', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:60, doc:'ALEJANDRA TELLO BECERRIL', ua:'LDA', gpo:'018', lC:'', pA:'', fecha:'', acuse:'', correo:'atello@uanl.edu.mx', notas:''},
+  {id:61, doc:'JESUS EDUARDO DURAN ACOSTA', ua:'LDA', gpo:'019', lC:'', pA:'', fecha:'', acuse:'', correo:'jeday59@gmail.com', notas:''},
+  {id:62, doc:'SARAHI ALVARADO VILLARREAL', ua:'LDA', gpo:'020', lC:'✓', pA:'✓', fecha:'2026-06-09', acuse:'', correo:'sarahialvaradov@gmail.com', notas:'Borrador acuse creado'},
+  {id:63, doc:'ALEJANDRA TELLO BECERRIL', ua:'LDA', gpo:'021', lC:'', pA:'', fecha:'', acuse:'', correo:'atello@uanl.edu.mx', notas:''},
+  {id:64, doc:'SONIA GUADALUPE RIVERA CASTILLO', ua:'LDA', gpo:'025', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:65, doc:'ANA MARIA HERNANDEZ PEREZ', ua:'LDA', gpo:'026', lC:'', pA:'', fecha:'', acuse:'', correo:'arq.ana.hp@gmail.com', notas:''},
+  {id:66, doc:'JESUS ALBERTO CANAVATI ESPINOSA', ua:'LDA', gpo:'027', lC:'', pA:'', fecha:'', acuse:'', correo:'alberto.canavati@gmail.com', notas:''},
+  {id:67, doc:'BRENDA JANETTE CASTANON NAVA', ua:'LDA', gpo:'028', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:68, doc:'MONICA PATRICIA ORTIZ DIAZ', ua:'LDA', gpo:'029', lC:'✓', pA:'✓', fecha:'2026-06-11', acuse:'', correo:'moni.ortiz67@gmail.com', notas:'Borrador acuse creado'},
+  {id:69, doc:'OFELIA EDITH CASTILLO ORTIZ', ua:'LDA', gpo:'030', lC:'', pA:'', fecha:'', acuse:'', correo:'edicostarg@gmail.com', notas:''},
+  {id:70, doc:'DANIEL ALBERTO TORRES GARZA', ua:'LDA', gpo:'031', lC:'✓', pA:'✓', fecha:'2026-06-12', acuse:'✓', correo:'torresgarza.daniel@gmail.com', notas:'Acuse enviado 18-jun'},
+  {id:71, doc:'ANA MARIA HERNANDEZ PEREZ', ua:'LDA', gpo:'032', lC:'', pA:'', fecha:'', acuse:'', correo:'arq.ana.hp@gmail.com', notas:''},
+  {id:72, doc:'NASHELLY RICANO ALARCON', ua:'LDA', gpo:'033', lC:'', pA:'', fecha:'', acuse:'', correo:'nashellyricanoalarcon@gmail.com', notas:''},
+  {id:73, doc:'SARAHI ALVARADO VILLARREAL', ua:'LDA', gpo:'034', lC:'✓', pA:'✓', fecha:'2026-06-09', acuse:'', correo:'sarahialvaradov@gmail.com', notas:'Borrador acuse creado'},
+  {id:74, doc:'ROBERTO EFRAIN PALOMO MARTINEZ', ua:'LDA', gpo:'035', lC:'✓', pA:'✓', fecha:'2026-05-29', acuse:'', correo:'arkixote@gmail.com', notas:'Borrador acuse creado'},
+  {id:75, doc:'JESUS ARTEMIO RUIZ ESPARZA', ua:'LDA', gpo:'036', lC:'', pA:'', fecha:'', acuse:'', correo:'ruizesparza89@gmail.com', notas:''},
+  {id:76, doc:'CESAR EDUARDO PINTOR ANGUIANO', ua:'IDA', gpo:'001', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:77, doc:'GUILIANA LIZBETH GALLARDO HURTADO', ua:'IDA', gpo:'002', lC:'', pA:'', fecha:'', acuse:'', correo:'lizbeth.75go@outlook.com', notas:''},
+  {id:78, doc:'CARMEN LUCERO CORONADO GONZALEZ', ua:'IDA', gpo:'003', lC:'', pA:'', fecha:'', acuse:'', correo:'carmen.coronadogn@uanl.edu.mx', notas:''},
+  {id:79, doc:'DANIEL ALBERTO TORRES GARZA', ua:'IDA', gpo:'004', lC:'✓', pA:'✓', fecha:'2026-06-12', acuse:'✓', correo:'torresgarza.daniel@gmail.com', notas:'Acuse enviado 18-jun'},
+  {id:80, doc:'CESAR EDUARDO PINTOR ANGUIANO', ua:'IDA', gpo:'005', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:81, doc:'PALMIRA CECILIA VALENZUELA TAMEZ', ua:'IDA', gpo:'006', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:82, doc:'ARNULFO ALVARADO RUIZ', ua:'IDA', gpo:'007', lC:'', pA:'', fecha:'', acuse:'', correo:'arnulfo.alvarado@gmail.com', notas:''},
+  {id:83, doc:'DANIEL ALBERTO TORRES GARZA', ua:'IDA', gpo:'008', lC:'✓', pA:'✓', fecha:'2026-06-12', acuse:'✓', correo:'torresgarza.daniel@gmail.com', notas:'Acuse enviado 18-jun'},
+  {id:84, doc:'FABIOLA ROMERO HUERTA', ua:'IDA', gpo:'009', lC:'', pA:'', fecha:'', acuse:'', correo:'fabiolar56@gmail.com', notas:''},
+  {id:85, doc:'DIANA KARINA PADILLA HERRERA', ua:'IDA', gpo:'010', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:86, doc:'MARCELA LIZETH MENDOZA VAZQUEZ', ua:'IDA', gpo:'011', lC:'', pA:'', fecha:'', acuse:'', correo:'arq.marcelamendoza@gmail.com', notas:''},
+  {id:87, doc:'MARIA MARLEN DE LEON CEPEDA', ua:'IDA', gpo:'012', lC:'✓', pA:'✓', fecha:'2026-06-01', acuse:'', correo:'mmarlenlc@yahoo.com.mx', notas:'Borrador acuse creado'},
+  {id:88, doc:'ANA VICTORIA CASILLAS ZAPATA', ua:'IDA', gpo:'013', lC:'✓', pA:'✗', fecha:'2026-06-16', acuse:'', correo:'acasillasz@hotmail.com', notas:'Proyecto alumno pendiente'},
+  {id:89, doc:'BRENDA JANETTE CASTANON NAVA', ua:'IDA', gpo:'014', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:90, doc:'GUILIANA LIZBETH GALLARDO HURTADO', ua:'IDA', gpo:'015', lC:'', pA:'', fecha:'', acuse:'', correo:'lizbeth.75go@outlook.com', notas:''},
+  {id:91, doc:'FABIOLA ROMERO HUERTA', ua:'IDA', gpo:'016', lC:'', pA:'', fecha:'', acuse:'', correo:'fabiolar56@gmail.com', notas:''},
+  {id:92, doc:'MARCELA LIZETH MENDOZA VAZQUEZ', ua:'IDA', gpo:'017', lC:'', pA:'', fecha:'', acuse:'', correo:'arq.marcelamendoza@gmail.com', notas:''},
+  {id:93, doc:'LUIS ENRIQUE OMANA TIJERINA', ua:'IDA', gpo:'018', lC:'', pA:'', fecha:'', acuse:'', correo:'luis.omana9@gmail.com', notas:''},
+  {id:94, doc:'ANA MARIA HERNANDEZ PEREZ', ua:'IDA', gpo:'019', lC:'', pA:'', fecha:'', acuse:'', correo:'arq.ana.hp@gmail.com', notas:''},
+  {id:95, doc:'EVA NOHEMI REA GARCIA', ua:'IDA', gpo:'020', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:96, doc:'JESUS EDUARDO DURAN ACOSTA', ua:'IDA', gpo:'021', lC:'', pA:'', fecha:'', acuse:'', correo:'jeday59@gmail.com', notas:''},
+  {id:97, doc:'YEYMI GUADALUPE HERNANDEZ RIVERA', ua:'IDA', gpo:'022', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:98, doc:'LUIS ENRIQUE OMANA TIJERINA', ua:'IDA', gpo:'023', lC:'', pA:'', fecha:'', acuse:'', correo:'luis.omana9@gmail.com', notas:''},
+  {id:99, doc:'JESUS ARTEMIO RUIZ ESPARZA', ua:'IDA', gpo:'024', lC:'', pA:'', fecha:'', acuse:'', correo:'ruizesparza89@gmail.com', notas:''},
+  {id:100, doc:'YEYMI GUADALUPE HERNANDEZ RIVERA', ua:'IDA', gpo:'028', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:''},
+  {id:101, doc:'ALMA MIREYA MARTINEZ MARTINEZ', ua:'IDA', gpo:'029', lC:'', pA:'', fecha:'', acuse:'', correo:'arqmireyamtz@hotmail.com', notas:''},
+  {id:102, doc:'JESUS ARTEMIO RUIZ ESPARZA', ua:'IDA', gpo:'030', lC:'', pA:'', fecha:'', acuse:'', correo:'ruizesparza89@gmail.com', notas:''},
+  {id:103, doc:'JAVIER MEDELLIN PALACIOS', ua:'LDA', gpo:'AJ-01', lC:'', pA:'', fecha:'', acuse:'', correo:'javierz30@gmail.com', notas:'Campus Juárez'},
+  {id:104, doc:'YEYMI GUADALUPE HERNANDEZ RIVERA', ua:'LDA', gpo:'AJ-02', lC:'', pA:'', fecha:'', acuse:'', correo:'', notas:'Campus Juárez'},
 ];
 let nextId = 105;
 let editId = null;
 
-// ══════════════════════════════════════════════════════════════════════════
-//  SEMBRADO PRELIMINAR AGOSTO–DICIEMBRE 2026 · Plan 440 (Modelo Acad. 2022)
-//  Fuente: "Reporte de nivel de grupo por materia/empleado" UANL, 27/07/26
-//  201 = LMC · 202 = LDA · 203 = IDA   |   Solo consulta y validación
-// ══════════════════════════════════════════════════════════════════════════
-const SEM_UA_NOMBRE = {
-  LMC: 'Laboratorio de Medios Creativos (201)',
-  LDA: 'Laboratorio de Diseño Arquitectónico (202)',
-  IDA: 'Introducción al Diseño Arquitectónico (203)'
-};
-// Docentes del padrón EJ26 que NO aparecen en este preliminar
-const SEM_SIN_CARGA = ['JACOBO ANTONIO CLETO GARZA','YEYMI GUADALUPE HERNANDEZ RIVERA'];
-
-const SEMBRADO_AD26 = [
-  {cve:'095164',doc:'FERMINA HINOJOSA VAZQUEZ',ua:'LMC',gpo:'001',aula:'1331A',bloque:'M1-M2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'096669',doc:'GABRIELA ALEJANDRA ALBUERNE KELLY',ua:'LMC',gpo:'002',aula:'1331B',bloque:'M1-M2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'100208',doc:'DORIS MORALES GONZALEZ',ua:'LMC',gpo:'003',aula:'1331C',bloque:'M1-M2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'083559',doc:'MARIA ELISA VAZQUEZ COVARRUBIAS',ua:'LMC',gpo:'004',aula:'1331A',bloque:'M3-M4',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'085783',doc:'GABRIELA PACHUCA CASTRUITA',ua:'LMC',gpo:'005',aula:'1331B',bloque:'M3-M4',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'095164',doc:'FERMINA HINOJOSA VAZQUEZ',ua:'LMC',gpo:'006',aula:'1331C',bloque:'M3-M4',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'094817',doc:'DIANA JANETTE HERNANDEZ PENILLA',ua:'LMC',gpo:'007',aula:'1331A',bloque:'M5-M6',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'095164',doc:'FERMINA HINOJOSA VAZQUEZ',ua:'LMC',gpo:'008',aula:'1331B',bloque:'M5-M6',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'083556',doc:'MARIA MARLEN DE LEON CEPEDA',ua:'LMC',gpo:'009',aula:'1331C',bloque:'M5-M6',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'108757',doc:'JESUS ARTEMIO RUIZ ESPARZA',ua:'LMC',gpo:'010',aula:'1331A',bloque:'V1-V2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'094817',doc:'DIANA JANETTE HERNANDEZ PENILLA',ua:'LMC',gpo:'011',aula:'1331B',bloque:'V1-V2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'103696',doc:'YESSICA CAZARES ELIZONDO',ua:'LMC',gpo:'012',aula:'1331C',bloque:'V1-V2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'107509',doc:'ALEJANDRA TELLO BECERRIL',ua:'LMC',gpo:'013',aula:'1331A',bloque:'V4-V5',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'103772',doc:'LUIS ALFONSO DE LA FUENTE SUAREZ',ua:'LMC',gpo:'014',aula:'1331B',bloque:'V4-V5',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'116777',doc:'MIRIEL RIVERA SOTO',ua:'LMC',gpo:'015',aula:'1331C',bloque:'V4-V5',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'116777',doc:'MIRIEL RIVERA SOTO',ua:'LMC',gpo:'016',aula:'1331A',bloque:'V6-N1',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'AR0208',doc:'ANA SOFIA HERRERA SALDIVAR',ua:'LMC',gpo:'017',aula:'1331B',bloque:'V6-N1',dias:'L-X-V',nr:0,s:'C',nuevo:1},
-  {cve:'115557',doc:'ALEJANDRA MINERVA BENAVIDES LOZANO',ua:'LMC',gpo:'018',aula:'1331C',bloque:'V6-N1',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'103772',doc:'LUIS ALFONSO DE LA FUENTE SUAREZ',ua:'LMC',gpo:'019',aula:'1115A',bloque:'V1-V2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'018602',doc:'JESUS EDUARDO DURAN ACOSTA',ua:'LMC',gpo:'020',aula:'1115B',bloque:'V1-V2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'116777',doc:'MIRIEL RIVERA SOTO',ua:'LMC',gpo:'021',aula:'1115C',bloque:'V1-V2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'083556',doc:'MARIA MARLEN DE LEON CEPEDA',ua:'LMC',gpo:'022',aula:'2310A',bloque:'M3-M4',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'096669',doc:'GABRIELA ALEJANDRA ALBUERNE KELLY',ua:'LMC',gpo:'023',aula:'2310B',bloque:'M3-M4',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'094817',doc:'DIANA JANETTE HERNANDEZ PENILLA',ua:'LMC',gpo:'024',aula:'2310C',bloque:'M3-M4',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'085783',doc:'GABRIELA PACHUCA CASTRUITA',ua:'LMC',gpo:'028',aula:'1443A',bloque:'M1-M2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'083559',doc:'MARIA ELISA VAZQUEZ COVARRUBIAS',ua:'LMC',gpo:'029',aula:'1443B',bloque:'M1-M2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'106866',doc:'DANIEL ALBERTO TORRES GARZA',ua:'LMC',gpo:'030',aula:'1443C',bloque:'M1-M2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'115557',doc:'ALEJANDRA MINERVA BENAVIDES LOZANO',ua:'LMC',gpo:'031',aula:'1223A',bloque:'V4-V5',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'114162',doc:'CARMEN LUCERO CORONADO GONZALEZ',ua:'LMC',gpo:'032',aula:'1223B',bloque:'V4-V5',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'100570',doc:'ROBERTO EFRAIN PALOMO MARTINEZ',ua:'LMC',gpo:'033',aula:'1223C',bloque:'V4-V5',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'100208',doc:'DORIS MORALES GONZALEZ',ua:'LMC',gpo:'034',aula:'1222A',bloque:'M5-M6',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'085783',doc:'GABRIELA PACHUCA CASTRUITA',ua:'LMC',gpo:'035',aula:'1222B',bloque:'M5-M6',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'083559',doc:'MARIA ELISA VAZQUEZ COVARRUBIAS',ua:'LMC',gpo:'036',aula:'1222C',bloque:'M5-M6',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'006579',doc:'ALMA MIREYA MARTINEZ MARTINEZ',ua:'LMC',gpo:'037',aula:'2209A',bloque:'M1-M2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'104725',doc:'BERTIN MAURICIO ZAVALA RUGERIO',ua:'LMC',gpo:'038',aula:'2314A',bloque:'M1-M2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'094817',doc:'DIANA JANETTE HERNANDEZ PENILLA',ua:'LMC',gpo:'039',aula:'2314B',bloque:'M1-M2',dias:'L-X-V',nr:0,s:'C',nuevo:0},
-  {cve:'115562',doc:'JAVIER MEDELLIN PALACIOS',ua:'LMC',gpo:'060',aula:'2207A',bloque:'V4-V5',dias:'L-X-V',nr:9,s:'C',nuevo:0},
-  {cve:'101216',doc:'OSVALDO ANTONIO GARCIA MOLINA',ua:'LMC',gpo:'061',aula:'1114A',bloque:'M3-M4',dias:'SÁB',nr:9,s:'C',nuevo:0},
-  {cve:'116777',doc:'MIRIEL RIVERA SOTO',ua:'LMC',gpo:'062',aula:'CIDL3',bloque:'N2-N3',dias:'L-X-V',nr:9,s:'C',nuevo:0},
-  {cve:'006579',doc:'ALMA MIREYA MARTINEZ MARTINEZ',ua:'LMC',gpo:'064',aula:'1223A',bloque:'N4-N5',dias:'L-X-V',nr:3,s:'A',nuevo:0},
-  {cve:'018602',doc:'JESUS EDUARDO DURAN ACOSTA',ua:'LMC',gpo:'065',aula:'1223B',bloque:'N4-N5',dias:'L-X-V',nr:9,s:'C',nuevo:0},
-  {cve:'101216',doc:'OSVALDO ANTONIO GARCIA MOLINA',ua:'LMC',gpo:'066',aula:'1223C',bloque:'N4-N5',dias:'L-X-V',nr:9,s:'C',nuevo:0},
-  {cve:'106863',doc:'DINORAH ADRIANA LUNA CASAS',ua:'LMC',gpo:'067',aula:'1443A',bloque:'V1-V2',dias:'L-X-V',nr:9,s:'C',nuevo:0},
-  {cve:'100570',doc:'ROBERTO EFRAIN PALOMO MARTINEZ',ua:'LMC',gpo:'068',aula:'1443B',bloque:'V1-V2',dias:'L-X-V',nr:9,s:'C',nuevo:0},
-  {cve:'114162',doc:'CARMEN LUCERO CORONADO GONZALEZ',ua:'LMC',gpo:'069',aula:'1443C',bloque:'V1-V2',dias:'L-X-V',nr:9,s:'C',nuevo:0},
-  {cve:'100690',doc:'JAVIER ISAAC GARZA ZUNIGA',ua:'LDA',gpo:'001',aula:'1333A',bloque:'M1-M2',dias:'L-X-V',nr:16,s:'A',nuevo:0},
-  {cve:'103094',doc:'LUCIO ESAU RODRIGUEZ DAVALOS',ua:'LDA',gpo:'002',aula:'1333B',bloque:'M1-M2',dias:'L-X-V',nr:17,s:'A',nuevo:0},
-  {cve:'103696',doc:'YESSICA CAZARES ELIZONDO',ua:'LDA',gpo:'003',aula:'1333C',bloque:'M1-M2',dias:'L-X-V',nr:18,s:'C',nuevo:0},
-  {cve:'108614',doc:'MARCELA LIZETH MENDOZA VAZQUEZ',ua:'LDA',gpo:'004',aula:'1333A',bloque:'M3-M4',dias:'L-X-V',nr:18,s:'C',nuevo:0},
-  {cve:'060100',doc:'MONICA PATRICIA ORTIZ DIAZ',ua:'LDA',gpo:'005',aula:'1333B',bloque:'M3-M4',dias:'L-X-V',nr:17,s:'A',nuevo:0},
-  {cve:'082999',doc:'MARTHA ELENA GOMEZ GARZA',ua:'LDA',gpo:'006',aula:'1333C',bloque:'M3-M4',dias:'L-X-V',nr:17,s:'A',nuevo:0},
-  {cve:'106863',doc:'DINORAH ADRIANA LUNA CASAS',ua:'LDA',gpo:'007',aula:'1333A',bloque:'M5-M6',dias:'L-X-V',nr:16,s:'A',nuevo:0},
-  {cve:'100570',doc:'ROBERTO EFRAIN PALOMO MARTINEZ',ua:'LDA',gpo:'008',aula:'1333B',bloque:'M5-M6',dias:'L-X-V',nr:17,s:'A',nuevo:0},
-  {cve:'060367',doc:'SONIA GUADALUPE RIVERA CASTILLO',ua:'LDA',gpo:'009',aula:'1333C',bloque:'M5-M6',dias:'L-X-V',nr:17,s:'A',nuevo:0},
-  {cve:'100707',doc:'OFELIA EDITH CASTILLO ORTIZ',ua:'LDA',gpo:'010',aula:'1333A',bloque:'V1-V2',dias:'L-X-V',nr:17,s:'A',nuevo:0},
-  {cve:'097894',doc:'HECTOR MIGUEL GIL LEAL',ua:'LDA',gpo:'011',aula:'1333B',bloque:'V1-V2',dias:'L-X-V',nr:16,s:'A',nuevo:0},
-  {cve:'107494',doc:'ARNULFO ALVARADO RUIZ',ua:'LDA',gpo:'012',aula:'1333C',bloque:'V1-V2',dias:'L-X-V',nr:17,s:'A',nuevo:0},
-  {cve:'106866',doc:'DANIEL ALBERTO TORRES GARZA',ua:'LDA',gpo:'013',aula:'1333A',bloque:'V4-V5',dias:'L-X-V',nr:16,s:'A',nuevo:0},
-  {cve:'097894',doc:'HECTOR MIGUEL GIL LEAL',ua:'LDA',gpo:'014',aula:'1333B',bloque:'V4-V5',dias:'L-X-V',nr:16,s:'A',nuevo:0},
-  {cve:'083556',doc:'MARIA MARLEN DE LEON CEPEDA',ua:'LDA',gpo:'015',aula:'1333C',bloque:'V4-V5',dias:'L-X-V',nr:16,s:'A',nuevo:0},
-  {cve:'018602',doc:'JESUS EDUARDO DURAN ACOSTA',ua:'LDA',gpo:'016',aula:'1333A',bloque:'V6-N1',dias:'L-X-V',nr:17,s:'A',nuevo:0},
-  {cve:'097894',doc:'HECTOR MIGUEL GIL LEAL',ua:'LDA',gpo:'017',aula:'1333B',bloque:'V6-N1',dias:'L-X-V',nr:16,s:'A',nuevo:0},
-  {cve:'107509',doc:'ALEJANDRA TELLO BECERRIL',ua:'LDA',gpo:'018',aula:'1333C',bloque:'V6-N1',dias:'L-X-V',nr:17,s:'A',nuevo:0},
-  {cve:'018602',doc:'JESUS EDUARDO DURAN ACOSTA',ua:'LDA',gpo:'019',aula:'1333A',bloque:'N2-N3',dias:'L-X-V',nr:18,s:'C',nuevo:0},
-  {cve:'114876',doc:'SARAHI ALVARADO VILLARREAL',ua:'LDA',gpo:'020',aula:'1333B',bloque:'N2-N3',dias:'L-X-V',nr:18,s:'C',nuevo:0},
-  {cve:'107509',doc:'ALEJANDRA TELLO BECERRIL',ua:'LDA',gpo:'021',aula:'1333C',bloque:'N2-N3',dias:'L-X-V',nr:15,s:'A',nuevo:0},
-  {cve:'060367',doc:'SONIA GUADALUPE RIVERA CASTILLO',ua:'LDA',gpo:'025',aula:'1332A',bloque:'M3-M4',dias:'L-X-V',nr:18,s:'C',nuevo:0},
-  {cve:'103094',doc:'LUCIO ESAU RODRIGUEZ DAVALOS',ua:'LDA',gpo:'026',aula:'1332B',bloque:'M3-M4',dias:'L-X-V',nr:16,s:'A',nuevo:0},
-  {cve:'085010',doc:'JESUS ALBERTO CANAVATI ESPINOSA',ua:'LDA',gpo:'027',aula:'1332C',bloque:'M3-M4',dias:'L-X-V',nr:17,s:'A',nuevo:0},
-  {cve:'100502',doc:'BRENDA JANETTE CASTANON NAVA',ua:'LDA',gpo:'028',aula:'1332A',bloque:'M5-M6',dias:'L-X-V',nr:17,s:'A',nuevo:0},
-  {cve:'060100',doc:'MONICA PATRICIA ORTIZ DIAZ',ua:'LDA',gpo:'029',aula:'1332B',bloque:'M5-M6',dias:'L-X-V',nr:17,s:'A',nuevo:0},
-  {cve:'100707',doc:'OFELIA EDITH CASTILLO ORTIZ',ua:'LDA',gpo:'030',aula:'1332C',bloque:'M5-M6',dias:'L-X-V',nr:16,s:'A',nuevo:0},
-  {cve:'106866',doc:'DANIEL ALBERTO TORRES GARZA',ua:'LDA',gpo:'031',aula:'1332A',bloque:'V1-V2',dias:'L-X-V',nr:16,s:'A',nuevo:0},
-  {cve:'108613',doc:'ANA MARIA HERNANDEZ PEREZ',ua:'LDA',gpo:'032',aula:'1332B',bloque:'V1-V2',dias:'L-X-V',nr:16,s:'A',nuevo:0},
-  {cve:'103692',doc:'NASHELLY RICANO ALARCON',ua:'LDA',gpo:'033',aula:'1332C',bloque:'V1-V2',dias:'L-X-V',nr:16,s:'A',nuevo:0},
-  {cve:'114876',doc:'SARAHI ALVARADO VILLARREAL',ua:'LDA',gpo:'034',aula:'1332A',bloque:'V6-N1',dias:'L-X-V',nr:16,s:'A',nuevo:0},
-  {cve:'100570',doc:'ROBERTO EFRAIN PALOMO MARTINEZ',ua:'LDA',gpo:'035',aula:'1332B',bloque:'V6-N1',dias:'L-X-V',nr:16,s:'A',nuevo:0},
-  {cve:'108757',doc:'JESUS ARTEMIO RUIZ ESPARZA',ua:'LDA',gpo:'036',aula:'1332C',bloque:'V6-N1',dias:'L-X-V',nr:17,s:'A',nuevo:0},
-  {cve:'109644',doc:'CESAR EDUARDO PINTOR ANGUIANO',ua:'IDA',gpo:'001',aula:'1114A',bloque:'M1-M2',dias:'L-X-V',nr:21,s:'C',nuevo:0},
-  {cve:'118248',doc:'GUILIANA LIZBETH GALLARDO HURTADO',ua:'IDA',gpo:'002',aula:'1114B',bloque:'M1-M2',dias:'L-X-V',nr:21,s:'C',nuevo:0},
-  {cve:'114162',doc:'CARMEN LUCERO CORONADO GONZALEZ',ua:'IDA',gpo:'003',aula:'1114C',bloque:'M1-M2',dias:'L-X-V',nr:22,s:'C',nuevo:0},
-  {cve:'106866',doc:'DANIEL ALBERTO TORRES GARZA',ua:'IDA',gpo:'004',aula:'1114A',bloque:'M3-M4',dias:'L-X-V',nr:21,s:'C',nuevo:0},
-  {cve:'109644',doc:'CESAR EDUARDO PINTOR ANGUIANO',ua:'IDA',gpo:'005',aula:'1114B',bloque:'M3-M4',dias:'L-X-V',nr:21,s:'C',nuevo:0},
-  {cve:'017355',doc:'PALMIRA CECILIA VALENZUELA TAMEZ',ua:'IDA',gpo:'006',aula:'1114C',bloque:'M3-M4',dias:'L-X-V',nr:22,s:'C',nuevo:0},
-  {cve:'107494',doc:'ARNULFO ALVARADO RUIZ',ua:'IDA',gpo:'007',aula:'1114A',bloque:'M5-M6',dias:'L-X-V',nr:21,s:'C',nuevo:0},
-  {cve:'106866',doc:'DANIEL ALBERTO TORRES GARZA',ua:'IDA',gpo:'008',aula:'1114B',bloque:'M5-M6',dias:'L-X-V',nr:21,s:'C',nuevo:0},
-  {cve:'105704',doc:'FABIOLA ROMERO HUERTA',ua:'IDA',gpo:'009',aula:'1114C',bloque:'M5-M6',dias:'L-X-V',nr:22,s:'C',nuevo:0},
-  {cve:'101117',doc:'DIANA KARINA PADILLA HERRERA',ua:'IDA',gpo:'010',aula:'1114A',bloque:'V1-V2',dias:'L-X-V',nr:21,s:'C',nuevo:0},
-  {cve:'108614',doc:'MARCELA LIZETH MENDOZA VAZQUEZ',ua:'IDA',gpo:'011',aula:'1114B',bloque:'V1-V2',dias:'L-X-V',nr:21,s:'C',nuevo:0},
-  {cve:'083556',doc:'MARIA MARLEN DE LEON CEPEDA',ua:'IDA',gpo:'012',aula:'1114C',bloque:'V1-V2',dias:'L-X-V',nr:22,s:'C',nuevo:0},
-  {cve:'103102',doc:'ANA VICTORIA CASILLAS ZAPATA',ua:'IDA',gpo:'013',aula:'2315A',bloque:'M3-M4',dias:'L-X-V',nr:13,s:'A',nuevo:0},
-  {cve:'100502',doc:'BRENDA JANETTE CASTANON NAVA',ua:'IDA',gpo:'014',aula:'2315B',bloque:'M3-M4',dias:'L-X-V',nr:13,s:'A',nuevo:0},
-  {cve:'118248',doc:'GUILIANA LIZBETH GALLARDO HURTADO',ua:'IDA',gpo:'015',aula:'2315C',bloque:'M3-M4',dias:'L-X-V',nr:13,s:'A',nuevo:0},
-  {cve:'105704',doc:'FABIOLA ROMERO HUERTA',ua:'IDA',gpo:'016',aula:'2310A',bloque:'M1-M2',dias:'L-X-V',nr:21,s:'C',nuevo:0},
-  {cve:'108614',doc:'MARCELA LIZETH MENDOZA VAZQUEZ',ua:'IDA',gpo:'017',aula:'2310B',bloque:'M1-M2',dias:'L-X-V',nr:22,s:'C',nuevo:0},
-  {cve:'115563',doc:'LUIS ENRIQUE OMANA TIJERINA',ua:'IDA',gpo:'018',aula:'2310C',bloque:'M1-M2',dias:'L-X-V',nr:21,s:'C',nuevo:0},
-  {cve:'108613',doc:'ANA MARIA HERNANDEZ PEREZ',ua:'IDA',gpo:'019',aula:'1114A',bloque:'V4-V5',dias:'L-X-V',nr:21,s:'C',nuevo:0},
-  {cve:'114875',doc:'EVA NOHEMI REA GARCIA',ua:'IDA',gpo:'020',aula:'1114B',bloque:'V4-V5',dias:'L-X-V',nr:22,s:'C',nuevo:0},
-  {cve:'018602',doc:'JESUS EDUARDO DURAN ACOSTA',ua:'IDA',gpo:'021',aula:'1114C',bloque:'V4-V5',dias:'L-X-V',nr:21,s:'C',nuevo:0},
-  {cve:'107494',doc:'ARNULFO ALVARADO RUIZ',ua:'IDA',gpo:'022',aula:'3305A',bloque:'V4-V5',dias:'L-X-V',nr:21,s:'C',nuevo:0},
-  {cve:'AR0012',doc:'ANGEL ISRAEL ZAVALA LOPEZ',ua:'IDA',gpo:'023',aula:'3305B',bloque:'V4-V5',dias:'L-X-V',nr:15,s:'A',nuevo:1},
-  {cve:'108757',doc:'JESUS ARTEMIO RUIZ ESPARZA',ua:'IDA',gpo:'024',aula:'3305C',bloque:'V4-V5',dias:'L-X-V',nr:22,s:'C',nuevo:0},
-  {cve:'AR9975',doc:'MARIA DEL SOCORRO ROBLEDO',ua:'IDA',gpo:'028',aula:'1114A',bloque:'N2-N3',dias:'L-X-V',nr:21,s:'C',nuevo:1},
-  {cve:'006579',doc:'ALMA MIREYA MARTINEZ MARTINEZ',ua:'IDA',gpo:'029',aula:'1114B',bloque:'N2-N3',dias:'L-X-V',nr:21,s:'C',nuevo:0},
-  {cve:'108757',doc:'JESUS ARTEMIO RUIZ ESPARZA',ua:'IDA',gpo:'030',aula:'1114C',bloque:'N2-N3',dias:'L-X-V',nr:21,s:'C',nuevo:0},
-  {cve:'006579',doc:'ALMA MIREYA MARTINEZ MARTINEZ',ua:'IDA',gpo:'034',aula:'1115A',bloque:'V6-N1',dias:'L-X-V',nr:21,s:'C',nuevo:0},
-  {cve:'114875',doc:'EVA NOHEMI REA GARCIA',ua:'IDA',gpo:'035',aula:'1115B',bloque:'V6-N1',dias:'L-X-V',nr:21,s:'C',nuevo:0},
-  {cve:'115563',doc:'LUIS ENRIQUE OMANA TIJERINA',ua:'IDA',gpo:'036',aula:'1115C',bloque:'V6-N1',dias:'L-X-V',nr:21,s:'C',nuevo:0},,
-  {cve:'AR0012',doc:'MELISSA DAVENPORT FLORES',ua:'IDA',gpo:'023',aula:'3305B',bloque:'V4-V5',dias:'L-X-V',nr:15,s:'A',nuevo:1} // meli.davenportflores@gmail.com · 8123209636
-];
-
-// ── Utilidades del sembrado ──
-function semTurno(b){ const c=b[0]; return c==='M'?'M':(c==='V'?'V':'N'); }
-function semTurnoLbl(b){ return {M:'Matutino',V:'Vespertino',N:'Nocturno'}[semTurno(b)]; }
-function semTurnoCls(b){ return {M:'p-mat',V:'p-ves',N:'p-noc'}[semTurno(b)]; }
-
-// ── Tabla oficial de horas-clase (50 min) ──
-const SEM_HORA = {
-  M1:['7:00','7:50'],   M2:['7:50','8:40'],   M3:['8:40','9:30'],   M4:['9:30','10:20'],
-  M5:['10:20','11:10'], M6:['11:10','12:00'],
-  V1:['12:00','12:50'], V2:['12:50','13:40'], V3:['13:40','14:30'], V4:['14:30','15:20'],
-  V5:['15:20','16:10'], V6:['16:10','17:00'],
-  N1:['17:00','17:50'], N2:['17:50','18:40'], N3:['18:40','19:30'], N4:['19:30','20:20'],
-  N5:['20:20','21:10']
-};
-// 'M1-M2' → '7:00 - 8:40'  (inicio del primer bloque, fin del último)
-function semHorario(b){
-  const p=b.split('-'), a=SEM_HORA[p[0]], z=SEM_HORA[p[p.length-1]];
-  return (a&&z) ? a[0]+' - '+z[1] : '';
-}
-function semHoraIni(b){ const a=SEM_HORA[b.split('-')[0]]; return a?a[0]:''; }
-function semHoraFin(b){ const p=b.split('-'), z=SEM_HORA[p[p.length-1]]; return z?z[1]:''; }
-
-// Detección de traslapes (mismo docente o misma aula en igual bloque y días)
-function semChoques(){
-  const kd={}, ka={}, out={doc:[],aula:[]};
-  SEMBRADO_AD26.forEach(r=>{
-    const kdd=r.cve+'|'+r.bloque+'|'+r.dias, kaa=r.aula+'|'+r.bloque+'|'+r.dias;
-    (kd[kdd]=kd[kdd]||[]).push(r); (ka[kaa]=ka[kaa]||[]).push(r);
-  });
-  Object.values(kd).forEach(v=>{ if(v.length>1) out.doc.push(v); });
-  Object.values(ka).forEach(v=>{ if(v.length>1) out.aula.push(v); });
-  return out;
-}
-
-const semExpanded = new Set();
-function toggleSem(cve){ semExpanded.has(cve)?semExpanded.delete(cve):semExpanded.add(cve); renderSem(); }
-
-function switchTab(t){
-  document.getElementById('panel-cumpl').style.display    = (t==='cumpl')    ? '' : 'none';
-  document.getElementById('panel-sembrado').style.display = (t==='sembrado') ? '' : 'none';
-  document.getElementById('tabBtn-cumpl').classList.toggle('active', t==='cumpl');
-  document.getElementById('tabBtn-sembrado').classList.toggle('active', t==='sembrado');
-  if(t==='sembrado') renderSem();
-}
-
-function renderSem(){
-  const q  = (document.getElementById('sSearch').value||'').toLowerCase();
-  const ua = document.getElementById('sUA').value;
-  const tu = document.getElementById('sTurno').value;
-  const bl = document.getElementById('sBloque').value;
-  const sort = document.getElementById('sSort').value;
-
-  const rows = SEMBRADO_AD26.filter(r=>{
-    if(ua && r.ua!==ua) return false;
-    if(tu && semTurno(r.bloque)!==tu) return false;
-    if(bl && r.bloque!==bl) return false;
-    if(q && !(r.doc.toLowerCase().includes(q) || r.gpo.includes(q) ||
-              r.aula.toLowerCase().includes(q) || r.ua.toLowerCase().includes(q))) return false;
-    return true;
-  });
-
-  const byDoc = {};
-  rows.forEach(r=>{ (byDoc[r.cve]=byDoc[r.cve]||[]).push(r); });
-  const maxCarga = Math.max(1, ...Object.values(byDoc).map(v=>v.length));
-
-  let docs = Object.keys(byDoc);
-  const apellido = n=>{ const p=n.trim().split(/\s+/); return p.length<=2?p[p.length-1]:p.slice(-2).join(' '); };
-  if(sort==='carga')         docs.sort((a,b)=> byDoc[b].length-byDoc[a].length || byDoc[a][0].doc.localeCompare(byDoc[b][0].doc));
-  else if(sort==='apellido') docs.sort((a,b)=> apellido(byDoc[a][0].doc).localeCompare(apellido(byDoc[b][0].doc)));
-  else                       docs.sort();
-
-  let html='', i=0;
-  docs.forEach(cve=>{
-    const g = byDoc[cve].slice().sort((x,y)=> x.ua.localeCompare(y.ua) || x.gpo.localeCompare(y.gpo));
-    const d = g[0]; i++;
-    const open = semExpanded.has(cve);
-    const uas  = [...new Set(g.map(x=>x.ua))];
-    const w    = Math.round(g.length/maxCarga*70);
-    html += `<tr class="doc-row" onclick="toggleSem('${cve}')">
-      <td class="left" style="color:var(--muted);font-size:10px">${i}</td>
-      <td class="left td-name">${open?'▾':'▸'} ${d.doc} ${d.nuevo?'<span class="pill p-new">nuevo</span>':''}</td>
-      <td style="font-family:Consolas,monospace;font-size:10.5px;color:var(--muted)">${cve}</td>
-      <td><span class="carga-bar" style="width:${w}px"></span> <b style="color:var(--tpa)">${g.length}</b>
-          <span style="font-size:9.5px;color:var(--muted)">gpo${g.length===1?'':'s'}</span></td>
-      <td>${uas.map(u=>`<span class="ua ${uaCls(u)}">${u}</span>`).join(' ')}</td>
-      <td colspan="7" style="color:var(--muted);font-size:10.5px">
-        ${[...new Set(g.map(x=>x.bloque))].sort().map(b=>`<span class="pill ${semTurnoCls(b)}">${b}</span><span class="hora">${semHorario(b)}</span>`).join(' &nbsp;')}</td>
-    </tr>`;
-    if(open) g.forEach(r=>{
-      html += `<tr class="det-row">
-        <td></td><td colspan="4" class="left" style="color:var(--muted);font-size:10.5px;padding-left:22px">${SEM_UA_NOMBRE[r.ua]}</td>
-        <td><span class="ua ${uaCls(r.ua)}">${r.ua}</span></td>
-        <td><b>${r.gpo}</b></td>
-        <td><span class="aula">${r.aula}</span></td>
-        <td><span class="pill ${semTurnoCls(r.bloque)}">${r.bloque}</span><br><span class="hora">${semHorario(r.bloque)}</span></td>
-        <td style="font-size:10.5px">${r.dias}</td>
-        <td>${r.nr||'<span style="color:#bbb">—</span>'}</td>
-        <td><span style="font-size:10px;font-weight:700;color:${r.s==='A'?'#1E8449':'#6C757D'}">${r.s}</span></td>
-      </tr>`;
-    });
-  });
-  if(!docs.length) html = '<tr><td colspan="12" style="padding:26px;color:var(--muted)">Sin resultados con estos filtros.</td></tr>';
-  document.getElementById('semBody').innerHTML = html;
-
-  const nrTot = rows.reduce((a,b)=>a+b.nr,0);
-  document.getElementById('semFoot').innerHTML =
-    `<td colspan="3">TOTALES (filtrado)</td><td>${rows.length} grupos</td><td>${docs.length} docentes</td>
-     <td colspan="5"></td><td>${nrTot}</td><td></td>`;
-  semKpis();
-}
-
-function semKpis(){
-  const S=SEMBRADO_AD26;
-  const set=k=>new Set(S.map(r=>r[k])).size;
-  document.getElementById('sDoc').textContent  = set('cve');
-  document.getElementById('sGpo').textContent  = S.length;
-  document.getElementById('sLMC').textContent  = S.filter(r=>r.ua==='LMC').length;
-  document.getElementById('sLDA').textContent  = S.filter(r=>r.ua==='LDA').length;
-  document.getElementById('sIDA').textContent  = S.filter(r=>r.ua==='IDA').length;
-  document.getElementById('sAula').textContent = set('aula');
-  document.getElementById('sProm').textContent = (S.length/set('cve')).toFixed(1);
-  document.getElementById('sNew').textContent  = new Set(S.filter(r=>r.nuevo).map(r=>r.cve)).size;
-  document.getElementById('semCnt').textContent= S.length;
-}
-
-function initSem(){
-  const sel=document.getElementById('sBloque');
-  [...new Set(SEMBRADO_AD26.map(r=>r.bloque))]
-    .sort((a,b)=> semHoraIni(a).padStart(5,'0').localeCompare(semHoraIni(b).padStart(5,'0')))
-    .forEach(b=>{
-      const o=document.createElement('option'); o.value=b;
-      o.textContent = b+'  ·  '+semHorario(b); sel.appendChild(o);
-    });
-  const ch=semChoques();
-  const nuevos=[...new Map(SEMBRADO_AD26.filter(r=>r.nuevo).map(r=>[r.cve,r.doc])).values()];
-  document.getElementById('semNote').innerHTML =
-    `<b>Preliminar Agosto–Diciembre 2026 · Plan 440</b> — reporte UANL del 27/07/26. Documento sujeto a cambios; esta pestaña es solo de consulta y no afecta el seguimiento EJ26.<br>
-     <b>Validación:</b> ${ch.doc.length===0?'✅ sin traslapes de docente':'⚠️ '+ch.doc.length+' traslape(s) de docente'} ·
-     ${ch.aula.length===0?'✅ sin traslapes de aula':'⚠️ '+ch.aula.length+' traslape(s) de aula'} ·
-     todos los grupos en L–X–V salvo LMC 061 (sábado).<br>
-     <b>Docentes nuevos (${nuevos.length}):</b> ${nuevos.join(' · ')}.
-     <b>Sin carga en este preliminar (${SEM_SIN_CARGA.length}):</b> ${SEM_SIN_CARGA.join(' · ')}.<br>
-     <span style="font-size:10.5px;opacity:.85">NR = inscritos según el reporte · S = estatus del grupo (A/C). Confirmar lectura de estas dos columnas con Escolar.</span><br>
-     <b>Horas-clase (50 min):</b> ${Object.keys(SEM_HORA).map(k=>`<span class="hora-ref">${k} ${SEM_HORA[k][0]}-${SEM_HORA[k][1]}</span>`).join('')}`;
-  semKpis();
-}
-
-function exportSemCSV(){
-  const hdr=['CVE','Docente','UA','Unidad de aprendizaje','Grupo','Aula','Bloque','Horario','Hora inicio','Hora fin','Turno','Días','NR','S','Docente nuevo'];
-  const rows=SEMBRADO_AD26.map(r=>[r.cve,r.doc,r.ua,SEM_UA_NOMBRE[r.ua],r.gpo,r.aula,r.bloque,
-    semHorario(r.bloque),semHoraIni(r.bloque),semHoraFin(r.bloque),
-    semTurnoLbl(r.bloque),r.dias,r.nr,r.s,r.nuevo?'Sí':''].map(v=>`"${v}"`).join(','));
-  const a=document.createElement('a');
-  a.href='data:text/csv;charset=utf-8,﻿'+encodeURIComponent([hdr.join(','),...rows].join('\n'));
-  a.download='Sembrado_AD26_Plan440_'+new Date().toISOString().slice(0,10)+'.csv';
-  a.click(); toast('⬇ Sembrado exportado');
-}
-
-// ── Indicador 1: % Asistencia Secretaría Académica (jIS + jCS) ──
-function pctSA(doc){
-  const t = TEACH[doc]||{jIS:'',jIC:'',jCS:'',jCC:'',m1:''};
-  const den = ACT_SA.filter(k=>t[k]!=='N/A').length;
-  if(!den) return 0;
-  return Math.round(ACT_SA.filter(k=>t[k]==='✓').length / den * 100);
-}
-// ── Indicador 2: % Asistencia Coordinación (jIC + jCC + m1) ──
-function pctCoord(doc){
-  const t = TEACH[doc]||{jIS:'',jIC:'',jCS:'',jCC:'',m1:''};
-  const den = ACT_COORD.filter(k=>t[k]!=='N/A').length;
-  if(!den) return 0;
-  return Math.round(ACT_COORD.filter(k=>t[k]==='✓').length / den * 100);
-}
-// ── Indicador 3: % Entrega Evidencias (lC + pA por grupo) ──
-function pctEvid(rows){
-  const total = rows.length * EVID.length;
-  if(!total) return 0;
-  return Math.round(EVID.reduce((s,k)=>s+rows.filter(r=>r[k]==='✓').length,0) / total * 100);
-}
-// ── Calificación Final (50% Coord + 50% Evid) ──
-function pctFinal(doc, rows){
-  return Math.round(pctCoord(doc) * 0.5 + pctEvid(rows) * 0.5);
-}
-// ── % por grupo individual (detalle) ──
 function pctGroup(r){
-  const den = EVID.filter(k=>r[k]!=='N/A').length;
-  if(!den) return 0;
-  return Math.round(EVID.filter(k=>r[k]==='✓').length / den * 100);
+  const active = EVID.filter(k => r[k]!=='N/A' && r[k]!=='');
+  if(!active.length) return 0;
+  return Math.round(active.filter(k=>r[k]==='✓').length / active.length * 100);
+}
+function pctDoc(doc, rows){
+  const t = TEACH[doc]||{jI:'',jC:'',m1:''};
+  const actActive = ACT.filter(k=>t[k]!=='N/A'&&t[k]!=='');
+  const actYes    = actActive.filter(k=>t[k]==='✓').length;
+  const evidYes   = rows.filter(r=>r.lC==='✓').length + rows.filter(r=>r.pA==='✓').length;
+  const total     = actActive.length + rows.length * 2;
+  if(!total) return 0;
+  return Math.round((actYes + evidYes) / total * 100);
 }
 function pctColor(p){ return p>=80?'#1E8449':p>=50?'#B7950B':'#C0392B'; }
 function chipCls(v){ return {'✓':'c-yes','✗':'c-no','N/A':'c-na'}[v]||'c-emp'; }
 function cycle(v){ return {''  :'✓','✓':'✗','✗':'N/A','N/A':''}[v]||''; }
 function uaCls(ua){ return {LMC:'ua-lmc',LDA:'ua-lda',IDA:'ua-ida'}[ua]||''; }
 
-const STORE_KEY = 'farq_ej26_v10';
-function saveAll(){
-  try{ localStorage.setItem(STORE_KEY, JSON.stringify({DATA,TEACH,nextId})); }catch(e){}
-  // Escribir al archivo con debounce (1.5 s tras el último click)
-  if(_fileHandle){ clearTimeout(_saveFileTmr); _saveFileTmr = setTimeout(_writeToFile, 1500); }
-}
+const STORE_KEY = 'farq_ej26_v8';
+function saveAll(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify({DATA,TEACH,nextId})); }catch(e){} }
 function load(){
   try{
-    if(!READ_ONLY) {
-      // Modo edición: cargar desde localStorage
-      ['farq_ej26','farq_cumplimiento','farq_ej26_v2','farq_ej26_v3','farq_ej26_v4','farq_ej26_v5','farq_ej26_v6','farq_ej26_v7','farq_ej26_v8','farq_ej26_v9'].forEach(k=>localStorage.removeItem(k));
-      const d = JSON.parse(localStorage.getItem(STORE_KEY)||'null');
-      if(d){ DATA=d.DATA; TEACH=d.TEACH||TEACH; nextId=d.nextId||103; }
-    }
-    // Aplicar parches en ambos modos:
-    // - Modo lectura (GitHub Pages): siempre, sobre datos del archivo
-    // - Modo edición: solo si el archivo fue actualizado
-    const needsMerge = READ_ONLY || (FILE_UPDATE_TS && FILE_UPDATE_TS !== (localStorage.getItem('farq_file_merge_ts')||''));
-    if(needsMerge) {
-      let changed = false;
-      AUTO_UPDATES.forEach(patch => {
-        const row = DATA.find(r => r.doc === patch.doc && r.gpo === patch.gpo);
-        if(row) {
-          if(patch.lC === '✓' && row.lC !== '✓') { row.lC = '✓'; changed = true; }
-          if(patch.pA === '✓' && row.pA !== '✓') { row.pA = '✓'; changed = true; }
-          if(patch.fecha && !row.fecha)            { row.fecha = patch.fecha; changed = true; }
-          if(patch.acuse === '✓' && row.acuse !== '✓') { row.acuse = '✓'; changed = true; }
-          if(patch.notas && !row.notas.includes(patch.notas)) {
-            row.notas = (row.notas ? row.notas + ' | ' : '') + patch.notas; changed = true;
-          }
-        }
-      });
-      TEACH_UPDATES.forEach(patch => {
-        if(!TEACH[patch.doc]) TEACH[patch.doc] = {jIS:'',jIC:'',jCS:'',jCC:'',m1:''};
-        ACT.forEach(f => {
-          if(patch[f] === '✓' && TEACH[patch.doc][f] !== '✓') {
-            TEACH[patch.doc][f] = '✓'; changed = true;
-          }
-        });
-      });
-      if(!READ_ONLY) {
-        localStorage.setItem('farq_file_merge_ts', FILE_UPDATE_TS);
-        if(changed) saveAll();
-      }
-    }
+    ['farq_ej26','farq_cumplimiento','farq_ej26_v2','farq_ej26_v3','farq_ej26_v4','farq_ej26_v5','farq_ej26_v6','farq_ej26_v7'].forEach(k=>localStorage.removeItem(k));
+    const d = JSON.parse(localStorage.getItem(STORE_KEY)||'null');
+    if(d){ DATA=d.DATA; TEACH=d.TEACH||TEACH; nextId=d.nextId||103; }
   }catch(e){}
 }
 
 function toggleActChip(doc, field){
-  if(!TEACH[doc]) TEACH[doc]={jIS:'',jIC:'',jCS:'',jCC:'',m1:''};
+  if(!TEACH[doc]) TEACH[doc]={jI:'',jC:'',m1:''};
   TEACH[doc][field]=cycle(TEACH[doc][field]);
   saveAll(); render();
 }
@@ -2517,7 +459,7 @@ function kpis(){
   const gmap = {};
   DATA.forEach(r=>{ if(!gmap[r.doc])gmap[r.doc]=[]; gmap[r.doc].push(r); });
   const docNames = Object.keys(gmap);
-  const docPcts  = docNames.map(d=>pctFinal(d,gmap[d]));
+  const docPcts  = docNames.map(d=>pctDoc(d,gmap[d]));
   const evidOk   = DATA.filter(r=>r.lC==='✓'&&r.pA==='✓').length;
   const avg      = docPcts.length ? Math.round(docPcts.reduce((a,b)=>a+b,0)/docPcts.length) : 0;
   document.getElementById('kDoc').textContent  = docNames.length;
@@ -2543,12 +485,6 @@ function summaryChip(rows, field){
   return `<span class="chip c-emp" style="cursor:default">·</span>`;
 }
 
-let sortMode = 'lista';
-function getSortKey(name){
-  const p = name.trim().split(/\s+/);
-  if(p.length <= 2) return p[p.length-1];
-  return p.slice(-2).join(' ');
-}
 function render(){
   const q  = document.getElementById('searchBox').value.toLowerCase();
   const ua = document.getElementById('fUA').value;
@@ -2560,7 +496,7 @@ function render(){
   const filtered = DATA.filter(r => {
     if(q && !r.doc.toLowerCase().includes(q) && !r.ua.toLowerCase().includes(q) && !r.gpo.includes(q)) return false;
     if(ua && r.ua !== ua) return false;
-    const p = pctFinal(r.doc, allGroups[r.doc]||[r]);
+    const p = pctDoc(r.doc, allGroups[r.doc]||[r]);
     if(fs==='ok'   && p<80) return false;
     if(fs==='med'  && (p<50||p>=80)) return false;
     if(fs==='bad'  && p>=50) return false;
@@ -2575,18 +511,11 @@ function render(){
   let html = '';
   let docIdx = 0;
 
-  let docEntries = Object.entries(groups);
-  if(sortMode === 'apellido'){
-    docEntries.sort(([a],[b]) => getSortKey(a).localeCompare(getSortKey(b), 'es'));
-  }
-  docEntries.forEach(([doc, gRows])=>{
+  Object.entries(groups).forEach(([doc, gRows])=>{
     docIdx++;
     const isOpen   = expanded.has(doc);
-    const t        = TEACH[doc]||{jIS:'',jIC:'',jCS:'',jCC:'',m1:''};
-    const docPct   = pctFinal(doc, gRows);
-    const saP      = pctSA(doc);
-    const coP      = pctCoord(doc);
-    const evP      = pctEvid(gRows);
+    const t        = TEACH[doc]||{jI:'',jC:'',m1:''};
+    const docPct   = pctDoc(doc, gRows);
     const pc       = pctColor(docPct);
     const correo   = gRows[0].correo;
     const allUA    = [...new Set(gRows.map(r=>r.ua))];
@@ -2608,7 +537,7 @@ function render(){
           <span style="font-size:14px;color:var(--muted);transition:transform .2s;display:inline-block;transform:rotate(${isOpen?90:0}deg)">▶</span>
           <div>
             <div class="td-name">${doc}</div>
-            ${READ_ONLY ? '' : `<div class="td-sub">${correo}</div>`}
+            <div class="td-sub">${correo}</div>
           </div>
         </div>
       </td>
@@ -2622,17 +551,14 @@ function render(){
       ${evidSumCells}
       <td style="font-size:10px;color:var(--muted)">${gRows[0].fecha||'—'}</td>
       <td>${acuseOk?`<span class="chip c-yes" style="cursor:default">✓</span>`:acusePend?`<span class="chip c-na" style="cursor:default;font-size:10px">parcial</span>`:`<span class="chip c-emp" style="cursor:default">·</span>`}</td>
-      ${READ_ONLY ? '' : `<td style="font-size:10px;color:var(--muted)">${hasWarn?'<span class="flag flag-err">⚠ dirección</span>':hasPend?'<span class="flag flag-warn">evid. pend.</span>':''}</td>`}
-      <td style="min-width:100px">
-        <div class="pct-wrap" style="margin-bottom:3px">
+      <td style="font-size:10px;color:var(--muted)">${hasWarn?'<span class="flag flag-err">⚠ dirección</span>':hasPend?'<span class="flag flag-warn">evid. pend.</span>':''}</td>
+      <td>
+        <div class="pct-wrap">
           <div class="pct-track"><div class="pct-fill" style="width:${docPct}%;background:${pc}"></div></div>
           <span class="pct-num" style="color:${pc}">${docPct}%</span>
         </div>
-        <div style="font-size:9px;color:var(--muted);text-align:center;line-height:1.6">
-          <span title="Indicador 1 — SA">SA:${saP}%</span> · <span title="Indicador 2 — Coord." style="color:#1A5276">Coord:${coP}%</span> · <span title="Indicador 3 — Evidencias" style="color:#145A32">Evid:${evP}%</span>
-        </div>
       </td>
-      ${READ_ONLY ? '' : '<td></td>'}
+      <td></td>
     </tr>`;
 
     if(isOpen){
@@ -2658,18 +584,18 @@ function render(){
           <td style="background:#F8FAFF"><input type="date" value="${r.fecha||''}" onclick="event.stopPropagation()" onchange="setField(${r.id},'fecha',this.value)"
               style="border:1px solid var(--border);border-radius:4px;padding:2px 4px;font-size:10px;width:100px;background:#fff"></td>
           <td style="background:#F8FAFF"><button class="chip ${chipCls(r.acuse)}" onclick="event.stopPropagation();toggleChip(${r.id},'acuse')">${r.acuse||'·'}</button></td>
-          ${READ_ONLY ? '' : `<td style="background:#F8FAFF;font-size:10px;color:var(--muted)">${r.correo.split('@')[0]}</td>`}
+          <td style="background:#F8FAFF;font-size:10px;color:var(--muted)">${r.correo.split('@')[0]}</td>
           <td style="background:#F8FAFF">
             <div class="pct-wrap">
               <div class="pct-track"><div class="pct-fill" style="width:${p}%;background:${pc2}"></div></div>
               <span class="pct-num" style="color:${pc2}">${p}%</span>
             </div>
           </td>
-          ${READ_ONLY ? '' : `<td class="left" style="background:#F8FAFF">
+          <td class="left" style="background:#F8FAFF">
             <span>${noteFl}</span>
             <input type="text" value="${r.notas||''}" onclick="event.stopPropagation()" onchange="setField(${r.id},'notas',this.value)"
               style="border:1px solid var(--border);border-radius:4px;padding:2px 5px;font-size:10px;width:110px;background:#fff">
-          </td>`}
+          </td>
         </tr>`;
       });
     }
@@ -2680,23 +606,12 @@ function render(){
   const docList  = Object.keys(groups);
   const actTots  = ACT.map(k  => docList.filter(d=>(TEACH[d]||{})[k]==='✓').length);
   const evidTots = EVID.map(k => DATA.filter(r=>r[k]==='✓').length);
-  const avgFinal = docList.length ? Math.round(docList.map(d=>pctFinal(d,groups[d])).reduce((a,b)=>a+b,0)/docList.length) : 0;
-  const avgSA    = docList.length ? Math.round(docList.map(d=>pctSA(d)).reduce((a,b)=>a+b,0)/docList.length) : 0;
-  const avgCoord = docList.length ? Math.round(docList.map(d=>pctCoord(d)).reduce((a,b)=>a+b,0)/docList.length) : 0;
-  const avgEvid  = docList.length ? Math.round(docList.map(d=>pctEvid(groups[d])).reduce((a,b)=>a+b,0)/docList.length) : 0;
+  const avg      = docList.length ? Math.round(docList.map(d=>pctDoc(d,groups[d])).reduce((a,b)=>a+b,0)/docList.length) : 0;
   document.getElementById('tfoot').innerHTML =
     `<td colspan="4" style="text-align:left;padding:7px 10px;color:#BDD7EE">TOTALES — ${DATA.length} grupos · ${docList.length} docentes</td>
      ${actTots.map(t=>`<td style="color:#C6EFCE">${t}</td>`).join('')}
      ${evidTots.map(t=>`<td style="color:#C6EFCE">${t}</td>`).join('')}
-     <td colspan="2"></td>
-     ${READ_ONLY ? '' : '<td></td>'}
-     <td style="color:#BDD7EE;font-size:9px;line-height:1.6">
-       <span style="color:#F9E79F">SA:${avgSA}%</span> ·
-       <span style="color:#A9DFBF">Coord:${avgCoord}%</span> ·
-       <span style="color:#A9DFBF">Evid:${avgEvid}%</span><br>
-       <b style="font-size:11px">Final: ${avgFinal}%</b>
-     </td>
-     ${READ_ONLY ? '' : '<td></td>'}`;
+     <td colspan="2"></td><td style="color:#BDD7EE">${avg}%</td><td></td>`;
 
   kpis();
 }
@@ -2710,21 +625,17 @@ function saveRow(){
   const email = document.getElementById('f_email').value.trim();
   const notas = document.getElementById('f_notas').value.trim();
   if(!doc||!gpo){ alert('Nombre y grupo son requeridos'); return; }
-  if(!TEACH[doc]) TEACH[doc]={jIS:'',jIC:'',jCS:'',jCC:'',m1:''};
+  if(!TEACH[doc]) TEACH[doc]={jI:'',jC:'',m1:''};
   DATA.push({id:nextId++,doc,ua,gpo,lC:'',pA:'',fecha:'',acuse:'',correo:email,notas});
   saveAll(); closeModal(); render();
   toast('✓ Docente agregado');
 }
 
 function exportCSV(){
-  const hdr = ['#','Docente','UA','Grupo',...ACT_LBL,'Lista Control','Proyecto Alumno','Fecha Entrega','Acuse','Correo','% SA','% Coord','% Evid','% Final','Notas'];
+  const hdr = ['#','Docente','UA','Grupo','Junta Inicio','Junta Cierre','Mesa de Trabajo','Lista Control','Proyecto Alumno','Fecha Entrega','Acuse','Correo','% Grupo','Notas'];
   const rows = DATA.map(r=>{
-    const t = TEACH[r.doc]||{jIS:'',jIC:'',jCS:'',jCC:'',m1:''};
-    const actVals = ACT.map(k=>t[k]||'');
-    const allRows = DATA.filter(x=>x.doc===r.doc);
-    return [r.id,r.doc,r.ua,r.gpo,...actVals,r.lC,r.pA,r.fecha,r.acuse,r.correo,
-            pctSA(r.doc)+'%',pctCoord(r.doc)+'%',pctEvid(allRows)+'%',pctFinal(r.doc,allRows)+'%',r.notas
-           ].map(v=>`"${v}"`).join(',');
+    const t = TEACH[r.doc]||{jI:'',jC:'',m1:''};
+    return [r.id,r.doc,r.ua,r.gpo,t.jI,t.jC,t.m1,r.lC,r.pA,r.fecha,r.acuse,r.correo,pctGroup(r)+'%',r.notas].map(v=>`"${v}"`).join(',');
   });
   const csv = [hdr.join(','),...rows].join('\n');
   const a = document.createElement('a');
@@ -2736,85 +647,8 @@ function exportCSV(){
 
 function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',2500); }
 
-// ── Sync automático: archivo local ↔ browser (File System Access API) ──
-let _fileHandle  = null;
-let _saveFileTmr = null;
-
-async function connectFile() {
-  if (!window.showOpenFilePicker) {
-    alert('Sync automático requiere Chrome o Edge.\nEn Firefox no está disponible.');
-    return;
-  }
-  try {
-    const [handle] = await window.showOpenFilePicker({
-      types: [{ description: 'Dashboard HTML', accept: {'text/html': ['.html']} }],
-      multiple: false
-    });
-    // Solicitar permiso de escritura explícito (necesario para createWritable)
-    const perm = await handle.requestPermission({ mode: 'readwrite' });
-    if (perm !== 'granted') {
-      alert('Se necesita permiso de escritura para sincronización automática.\nIntenta de nuevo y acepta el permiso.');
-      return;
-    }
-    _fileHandle = handle;
-    localStorage.setItem('farq_file_sync', 'on');
-    const btn = document.getElementById('btnConnect');
-    btn.textContent = '🟢 Archivo conectado';
-    btn.style.fontWeight = '700';
-    toast('✅ Archivo conectado — volcando estado actual…');
-    await _writeToFile();
-  } catch(e) {
-    if (e.name !== 'AbortError') alert('Error al conectar: ' + e.message);
-  }
-}
-
-async function _writeToFile() {
-  if (!_fileHandle) return;
-  try {
-    const file = await _fileHandle.getFile();
-    let html   = await file.text();
-    const ts   = new Date().toISOString().slice(0, 19);
-
-    html = html.replace(
-      /const FILE_UPDATE_TS\s*=\s*'[^']*';/,
-      `const FILE_UPDATE_TS = '${ts}';`
-    );
-    html = html.replace(
-      /const AUTO_UPDATES\s*=\s*\[[\s\S]*?\];/,
-      `const AUTO_UPDATES   = [];\n  // Consolidados en DATA el ${ts}`
-    );
-    const newBlock = `let TEACH = ${JSON.stringify(TEACH,null,2)};\n\nlet DATA = ${JSON.stringify(DATA,null,2)};\nlet nextId = ${nextId};`;
-    const updated  = html.replace(
-      /let TEACH\s*=\s*\{[\s\S]*?\};\s*\n+let DATA\s*=\s*\[[\s\S]*?\];\s*\nlet nextId\s*=\s*\d+;/,
-      newBlock
-    );
-    if (updated === html) { toast('⚠️ Sin cambios que guardar'); return; }
-    const w = await _fileHandle.createWritable();
-    await w.write(updated);
-    await w.close();
-    toast('💾 Archivo guardado — ' + new Date().toLocaleTimeString('es-MX'));
-  } catch(e) {
-    if (e.name === 'NotAllowedError') {
-      _fileHandle = null;
-      const btn = document.getElementById('btnConnect');
-      if (btn) { btn.textContent = '🔗 Conectar archivo'; btn.style.color = ''; }
-      toast('⚠️ Permiso de archivo expiró — vuelve a conectar');
-    } else { console.warn('writeToFile error:', e.message); }
-  }
-}
-
-// ── Modo solo lectura en GitHub Pages ──
-const READ_ONLY = window.location.hostname.includes('github.io');
-if (READ_ONLY) {
-  document.body.classList.add('read-only');
-  const segEl = document.getElementById('th-seg-group');
-  if (segEl) segEl.setAttribute('colspan', '2');
-}
-
 load();
 render();
-initSem();
-renderSem();
 </script>
 </body>
 </html>
